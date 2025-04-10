@@ -1,25 +1,18 @@
-import type { Metadata } from "next";
+import type { Metadata } from "next"
 
-import Header from "@/components/sections/display/Header";
-import Footer from "@/components/sections/display/Footer";
-
-import { GridProjects } from "@/components/sections/projects/GridProjects";
+import { PageHeading } from "@/components/shared/page-heading"
 
 export const metadata: Metadata = {
-	title: "Projects | FindMalek",
-};
+  title: "Projects",
+}
 
 export default function Projects() {
-	return (
-		<>
-			<Header name="Projects." />
-
-			<GridProjects />
-
-			<Footer
-				name="Convinced yet to contact me ?"
-				href="/contact"
-			/>
-		</>
-	);
+  return (
+    <div className="w-full px-4 pt-20">
+      <PageHeading
+        title="Projects"
+        heading="I love shipping products and open source software."
+      />
+    </div>
+  )
 }
