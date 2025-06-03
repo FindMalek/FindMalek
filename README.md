@@ -51,9 +51,9 @@ Specialized in transforming complex ideas into elegant digital solutions through
 
 ![findmalek's Streak](https://github-readme-streak-stats.herokuapp.com/?user=findmalek&theme=prussian&hide_border=false)
 
-![findmalek's Stats](https://github-readme-stats.vercel.app/api?username=findmalek&theme=prussian&show_icons=true&hide_border=false&count_private=true)
+![findmalek's Stats](https://github.findmalek.com/api?username=findmalek&theme=prussian&show_icons=true&hide_border=false&count_private=true)
 
-![findmalek's Top Languages](https://github-readme-stats.vercel.app/api/top-langs/?username=findmalek&theme=prussian&show_icons=true&hide_border=false&layout=compact)
+![findmalek's Top Languages](https://github.findmalek.com/api/top-langs/?username=findmalek&theme=prussian&show_icons=true&hide_border=false&layout=compact)
 
 ### 🫂 Social Media Accounts
 
