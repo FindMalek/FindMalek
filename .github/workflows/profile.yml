@@ -1,0 +1,47 @@
+name: Refresh animated profile
+
+on:
+  schedule:
+    - cron: "17 3 * * *"
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - profile.config.json
+      - profile.config.schema.json
+      - scripts/build-profile.mjs
+      - scripts/check-profile.mjs
+      - fonts/**
+      - package.json
+      - LICENSE
+
+permissions:
+  contents: write
+
+concurrency:
+  group: profile-readme-refresh
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Validate configuration
+        run: npm run check
+      - name: Fetch GitHub data and render SVGs
+        run: npm run build
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Commit generated profile
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add README.md profile/generated profile/github-cache.json
+          git diff --cached --quiet && exit 0
+          git commit -m "chore: refresh animated profile"
+          git pull --rebase origin main
+          git push

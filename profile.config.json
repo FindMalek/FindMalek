@@ -1,0 +1,125 @@
+{
+  "$schema": "./profile.config.schema.json",
+  "github": {
+    "username": "FindMalek",
+    "featuredRepos": [
+      {
+        "repo": "FindMalek/dukkani",
+        "solidButton": true,
+        "ctaLabel": "Visit project",
+        "ctaArrow": null,
+        "showRepoPath": false,
+        "projectUrl": "https://dukkani.co",
+        "showBanner": true,
+        "autoOgImage": true,
+        "ogSourceUrl": "https://dukkani.co",
+        "bannerUrl": ""
+      },
+      {
+        "repo": "FindMalek/guesswork",
+        "solidButton": true,
+        "ctaLabel": "Visit project",
+        "ctaArrow": null,
+        "showRepoPath": false,
+        "projectUrl": "https://guesswork.findmalek.com",
+        "showBanner": true,
+        "autoOgImage": true,
+        "ogSourceUrl": "https://guesswork.findmalek.com",
+        "bannerUrl": ""
+      }
+    ],
+    "moreRepos": [
+      "website",
+      "sonaraem",
+      "zero-locker",
+      "lyterion",
+      "lodesong",
+      "muslim-fasting",
+      "Syncify"
+    ]
+  },
+  "projects": {
+    "bannersEnabled": true,
+    "autoOgImages": true,
+    "bannerHeight": 220,
+    "bannerFit": "contain"
+  },
+  "profile": {
+    "name": "malek",
+    "handle": "@FindMalek",
+    "role": "ai + backend engineer",
+    "intro": "Building AI, backend, web and open source tools.",
+    "status": "shipping guesswork, dukkani and sonaraem",
+    "focus": "AI/backend",
+    "state": "active",
+    "links": [
+      {
+        "label": "portfolio",
+        "url": "https://www.findmalek.com"
+      },
+      {
+        "label": "work",
+        "url": "https://www.findmalek.com/work"
+      },
+      {
+        "label": "linkedin",
+        "url": "https://www.linkedin.com/in/findmalek"
+      },
+      {
+        "label": "instagram",
+        "url": "https://www.instagram.com/findmalek"
+      }
+    ]
+  },
+  "theme": {
+    "page": "#13161b",
+    "panel": "#1a1e25",
+    "well": "#20252d",
+    "text1": "#f2f4f7",
+    "text2": "#c3c9d2",
+    "text3": "#8b94a1",
+    "line": "#2f3641",
+    "lineFaint": "#252b34",
+    "accent": "#3b82f6",
+    "accentText": "#3b82f6",
+    "selected": "#0f2447",
+    "ok": "#c3c9d2",
+    "warn": "#a8b0bc",
+    "fail": "#e0e4ea",
+    "languageFallback": "#8b94a1",
+    "auroraPalette": [
+      "#0c1017",
+      "#1b2a44",
+      "#24457f",
+      "#2f66c9",
+      "#5b95f0",
+      "#a9c8ff"
+    ],
+    "buttonBorder": "#2f66c9",
+    "buttonText": "#ffffff"
+  },
+  "motion": {
+    "enabled": true,
+    "speed": 1,
+    "auroraDuration": 9,
+    "auroraFps": 30,
+    "pendingDuration": 0.8
+  },
+  "effects": {
+    "dither": true,
+    "ditherScale": 4,
+    "ditherStrength": 0.82,
+    "animatedAurora": true,
+    "pendingMark": true
+  },
+  "layout": {
+    "width": 880,
+    "projectColumns": 2,
+    "showStats": true,
+    "showUpdatedAt": true
+  },
+  "rank": {
+    "enabled": true,
+    "country": "TN"
+  }
+}
