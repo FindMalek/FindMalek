@@ -47,10 +47,10 @@
   "profile": {
     "name": "malek",
     "handle": "@FindMalek",
-    "role": "design engineer",
-    "intro": "Design engineer building web products and open source tools.",
-    "status": "shipping dukkani and guesswork",
-    "focus": "web + design",
+    "role": "ai + backend engineer",
+    "intro": "Building AI, backend, web and open source tools.",
+    "status": "shipping guesswork, dukkani and sonaraem",
+    "focus": "AI/backend",
     "state": "active",
     "links": [
       {
@@ -117,5 +117,9 @@
     "projectColumns": 2,
     "showStats": true,
     "showUpdatedAt": true
+  },
+  "rank": {
+    "enabled": true,
+    "country": "TN"
   }
 }

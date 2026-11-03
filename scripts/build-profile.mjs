@@ -11,6 +11,7 @@ const OUT = path.join(ROOT, 'profile', 'generated');
 const CACHE = path.join(ROOT, 'profile', 'github-cache.json');
 const config = JSON.parse(await readFile(path.join(ROOT, 'profile.config.json'), 'utf8'));
 const monoFont = (await readFile(path.join(ROOT, 'fonts', 'CommitMono-Regular.woff2'))).toString('base64');
+const fontLicense = (await readFile(path.join(ROOT, 'fonts', 'CommitMono-LICENSE'), 'utf8')).replaceAll('*/', '* /').trim();
 const { github, projects, profile, theme: c, motion, effects, layout } = config;
 const W = layout.width;
 const speed = Math.max(0.05, motion.speed || 1);
@@ -51,57 +52,152 @@ async function githubJson(endpoint) {
   const headers = { Accept: 'application/vnd.github+json', 'User-Agent': 'animated-profile-readme' };
   if (process.env.GITHUB_TOKEN) headers.Authorization = `Bearer ${process.env.GITHUB_TOKEN}`;
   const response = await fetch(`https://api.github.com${endpoint}`, { headers });
-  if (!response.ok) throw new Error(`GitHub API ${response.status}: ${endpoint}`);
+  if (!response.ok) throw Object.assign(new Error(`GitHub API ${response.status}: ${endpoint}`), { status: response.status });
   return response.json();
+}
+
+const prevCache = await readFile(CACHE, 'utf8').then(JSON.parse).catch(() => ({}));
+const safely = async (label, load, fallback) => {
+  try { return await load(); } catch (error) {
+    console.warn(`${label} unavailable, using cached value: ${error.message}`);
+    return fallback ?? null;
+  }
+};
+
+async function fetchRank() {
+  const response = await fetch(`https://gitista.com/data/${config.rank.country.toLowerCase()}.json`, { headers: { 'User-Agent': 'animated-profile-readme' } });
+  if (!response.ok) throw new Error(`gitista HTTP ${response.status}`);
+  const json = await response.json();
+  const me = json.contributors?.find((entry) => entry.login.toLowerCase() === github.username.toLowerCase());
+  if (!me) throw new Error('not listed on gitista');
+  return { countryRank: me.countryRank, worldRank: me.worldRank, countryName: json.country.name, total: json.totalContributors };
+}
+
+async function fetchStreak() {
+  const response = await fetch(`https://github.com/users/${github.username}/contributions`, { headers: { 'User-Agent': 'Mozilla/5.0 animated-profile-readme' } });
+  if (!response.ok) throw new Error(`HTTP ${response.status}`);
+  const html = await response.text();
+  const counts = new Map();
+  for (const match of html.matchAll(/<tool-tip[^>]*\bfor="([^"]+)"[^>]*>\s*(No|\d[\d,]*) contributions?\b/g)) {
+    counts.set(match[1], match[2] === 'No' ? 0 : Number(match[2].replaceAll(',', '')));
+  }
+  const today = new Date().toISOString().slice(0, 10);
+  const days = [];
+  for (const [tag] of html.matchAll(/<td\b[^>]*data-date="[^"]*"[^>]*>/g)) {
+    const attr = (name) => tag.match(new RegExp(`${name}="([^"]*)"`))?.[1];
+    const id = attr('id');
+    const day = attr('data-date');
+    if (day && id && counts.has(id) && day <= today) days.push({ day, level: Number(attr('data-level') || 0), count: counts.get(id) });
+  }
+  if (days.length < 300) throw new Error('contribution calendar markup changed');
+  days.sort((a, b) => a.day.localeCompare(b.day));
+  let longest = { length: 0, start: '', end: '' };
+  let run = null;
+  for (const { day, count } of days) {
+    if (count > 0) {
+      run = run ? { ...run, length: run.length + 1, end: day } : { length: 1, start: day, end: day };
+      if (run.length > longest.length) longest = run;
+    } else run = null;
+  }
+  let current = { length: 0, start: '', end: '' };
+  let index = days.length - 1;
+  if (days[index].count === 0) index--;
+  while (index >= 0 && days[index].count > 0) {
+    current = { length: current.length + 1, start: days[index].day, end: current.end || days[index].day };
+    index--;
+  }
+  return {
+    total: days.reduce((sum, entry) => sum + entry.count, 0),
+    current,
+    longest,
+    from: days[0].day,
+    to: days.at(-1).day,
+    levels: days.map((entry) => entry.level),
+  };
+}
+
+async function fetchStats() {
+  const name = github.username;
+  const repos = [];
+  for (let page = 1; page <= 5; page++) {
+    const batch = await githubJson(`/users/${name}/repos?per_page=100&type=owner&page=${page}`);
+    repos.push(...batch);
+    if (batch.length < 100) break;
+  }
+  const own = repos.filter((repo) => !repo.fork);
+  const sizes = {};
+  for (const repo of own) if (repo.language) sizes[repo.language] = (sizes[repo.language] || 0) + 1;
+  const top = Object.entries(sizes).sort((a, b) => b[1] - a[1]).slice(0, 5);
+  const topTotal = top.reduce((sum, [, size]) => sum + size, 0) || 1;
+  const count = async (endpoint) => (await githubJson(endpoint)).total_count;
+  const [commits, pulls, issues] = await Promise.all([
+    count(`/search/commits?q=author:${name}&per_page=1`),
+    count(`/search/issues?q=author:${name}+type:pr&per_page=1`),
+    count(`/search/issues?q=author:${name}+type:issue&per_page=1`),
+  ]);
+  return {
+    stars: own.reduce((sum, repo) => sum + repo.stargazers_count, 0),
+    commits,
+    pulls,
+    issues,
+    languages: top.map(([language, size]) => ({ name: language, share: size / topTotal })),
+  };
 }
 
 async function loadGithubData() {
   const names = [...new Set([...github.featuredRepos.map(repoKey), ...github.moreRepos.map(repoKey)])];
+  const missingFrom = (repos) => github.featuredRepos.map(repoKey).filter((key) => !repos?.[key]);
   try {
     const rawUser = await githubJson(`/users/${github.username}`);
     const user = { login: rawUser.login, public_repos: rawUser.public_repos, followers: rawUser.followers, following: rawUser.following };
     const repos = {};
     await Promise.all(names.map(async (entry) => {
       const [owner, name] = entry.includes('/') ? entry.split('/') : [github.username, entry];
-      const repo = await githubJson(`/repos/${owner}/${name}`);
-      repos[entry] = {
-        name: repo.name,
-        full_name: repo.full_name,
-        html_url: repo.html_url,
-        description: repo.description,
-        language: repo.language,
-        stargazers_count: repo.stargazers_count,
-        forks_count: repo.forks_count,
-        updated_at: repo.updated_at,
-        topics: repo.topics || [],
-      };
+      try {
+        const repo = await githubJson(`/repos/${owner}/${name}`);
+        repos[entry] = {
+          name: repo.name,
+          full_name: repo.full_name,
+          html_url: repo.html_url,
+          description: repo.description,
+          language: repo.language,
+          stargazers_count: repo.stargazers_count,
+          forks_count: repo.forks_count,
+          updated_at: repo.updated_at,
+          topics: repo.topics || [],
+        };
+      } catch (error) {
+        if (error.status === 404) return console.warn(`${entry} not found, dropping it`);
+        if (!prevCache.repos?.[entry]) throw error;
+        console.warn(`${entry} fetch failed, using cached copy: ${error.message}`);
+        repos[entry] = prevCache.repos[entry];
+      }
     }));
-    const result = { user, repos };
+    const missing = missingFrom(repos);
+    if (missing.length) throw new Error(`featured repositories unavailable: ${missing.join(', ')}`);
+    const rank = config.rank?.enabled ? await safely('gitista rank', fetchRank, prevCache.rank) : null;
+    const streak = await safely('contribution calendar', fetchStreak, prevCache.streak);
+    const stats = await safely('profile stats', fetchStats, prevCache.stats);
+    const result = { user, repos, rank, streak, stats };
     await mkdir(path.dirname(CACHE), { recursive: true });
     await writeFile(CACHE, `${JSON.stringify(result, null, 2)}\n`);
     return result;
   } catch (error) {
-    try {
-      const cached = JSON.parse(await readFile(CACHE, 'utf8'));
-      console.warn(`GitHub fetch failed; using cached repository data: ${error.message}`);
-      return cached;
-    } catch {
-      throw error;
-    }
+    if (!prevCache.user || missingFrom(prevCache.repos).length) throw error;
+    console.warn(`GitHub fetch failed; using cached repository data: ${error.message}`);
+    return prevCache;
   }
 }
 
 const data = await loadGithubData();
 const generatorSource = await readFile(GENERATOR_FILE, 'utf8');
-const assetVersion = createHash('sha256')
-  .update(JSON.stringify(config))
-  .update(JSON.stringify(data))
-  .update(generatorSource)
-  .digest('hex')
-  .slice(0, 10);
+let assetVersion = '';
 
 function style() {
   return `<style>
+    /* CommitMono font license
+${fontLicense}
+*/
     @font-face{font-family:Commit;src:url(data:font/woff2;base64,${monoFont}) format('woff2');font-weight:400}
     text{font-family:Commit,ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-weight:400}image{image-rendering:pixelated}
     .sans{font-family:Inter,"Segoe UI",Arial,sans-serif}.t1{fill:${c.text1}}.t2{fill:${c.text2}}.t3{fill:${c.text3}}.accent{fill:${c.accent}}.ok{fill:${c.ok}}
@@ -316,6 +412,12 @@ function headerSvg() {
   const sceneH = 252;
   const split = 535;
   const user = data.user;
+  const rank = data.rank;
+  const lowerY = sceneY + sceneH + 100;
+  const lowerH = H - lowerY;
+  const rankCell = rank
+    ? statCell(split, lowerY, 172, lowerH, 'Open source rank', `#${rank.countryRank} ${rank.countryName}`, false, 'accent', `#${rank.worldRank} worldwide`)
+    : statCell(split, lowerY, 172, lowerH, 'Status', profile.state, false, 'ok');
   const body = `${panelHead(W, profile.name, `github.com/${github.username}`, 'building')}
     <g transform="translate(0 ${sceneY})">${aurora(W, sceneH)}</g><line x1="0" x2="${W}" y1="${sceneY + sceneH + .5}" y2="${sceneY + sceneH + .5}" stroke="${c.line}"/>
     <line x1="${split + .5}" x2="${split + .5}" y1="${sceneY + sceneH}" y2="${H}" stroke="${c.line}"/>
@@ -325,13 +427,13 @@ function headerSvg() {
     <text x="26" y="452" class="micro t3">Handle</text><text x="86" y="452" class="code t1">${esc(clamp(profile.handle, 28))}</text>
     ${statCell(split, sceneY + sceneH, 172, 100, 'Repositories', compact(user.public_repos))}
     ${statCell(split + 172, sceneY + sceneH, W - split - 172, 100, 'Followers', compact(user.followers), true)}
-    ${statCell(split, sceneY + sceneH + 100, 172, H - sceneY - sceneH - 100, 'Status', profile.state, false, 'ok')}
+    ${rankCell}
     ${statCell(split + 172, sceneY + sceneH + 100, W - split - 172, H - sceneY - sceneH - 100, 'Focus', profile.focus, true)}`;
-  return shell(W, H, `${profile.name}: ${profile.intro}`, body);
+  return shell(W, H, `${profile.name}: ${profile.intro}${rank ? ` #${rank.countryRank} open source contributor in ${rank.countryName}, #${rank.worldRank} worldwide.` : ''}`, body);
 }
 
-function statCell(x, y, width, height, label, value, rightEdge = false, valueClass = 't1') {
-  return `<g><line x1="${x}" x2="${x + width}" y1="${y + height + .5}" y2="${y + height + .5}" stroke="${c.line}"/><line x1="${x + width + .5}" x2="${x + width + .5}" y1="${y}" y2="${y + height}" stroke="${rightEdge ? 'none' : c.line}"/><text x="${x + 16}" y="${y + 27}" class="micro t3">${esc(label)}</text><text x="${x + 16}" y="${y + 62}" class="code ${valueClass}" font-size="24">${esc(clamp(value, 14))}</text></g>`;
+function statCell(x, y, width, height, label, value, rightEdge = false, valueClass = 't1', sub = '') {
+  return `<g><line x1="${x}" x2="${x + width}" y1="${y + height + .5}" y2="${y + height + .5}" stroke="${c.line}"/><line x1="${x + width + .5}" x2="${x + width + .5}" y1="${y}" y2="${y + height}" stroke="${rightEdge ? 'none' : c.line}"/><text x="${x + 16}" y="${y + 27}" class="micro t3">${esc(label)}</text><text x="${x + 16}" y="${y + 62}" class="code ${valueClass}" font-size="24">${esc(clamp(value, 14))}</text>${sub ? `<text x="${x + 16}" y="${y + 84}" class="code-sm t3">${esc(clamp(sub, 24))}</text>` : ''}</g>`;
 }
 
 function projectSvg(repo) {
@@ -385,24 +487,82 @@ function reposSvg(repos) {
   return shell(W, H, `More repositories by ${github.username}`, `${panelHead(W, 'more repositories', `${repos.length} selected`)}${headings}${rows}`);
 }
 
+function streakSvg(streak) {
+  const top = 38;
+  const rowH = 100;
+  const cell = W / 3;
+  const pitch = 15;
+  const size = 11;
+  const fills = [c.well, c.auroraPalette[1], c.auroraPalette[2], c.auroraPalette[4], c.auroraPalette[5]];
+  const offset = new Date(`${streak.from}T00:00:00Z`).getUTCDay();
+  const columns = Math.ceil((streak.levels.length + offset) / 7);
+  const gridX = Math.round((W - columns * pitch + (pitch - size)) / 2);
+  const gridY = top + rowH + 24;
+  const H = gridY + 7 * pitch + 12;
+  const squares = streak.levels.map((level, index) => {
+    const slot = index + offset;
+    return `<rect x="${gridX + Math.floor(slot / 7) * pitch}" y="${gridY + (slot % 7) * pitch}" width="${size}" height="${size}" fill="${fills[Math.min(level, 4)]}"/>`;
+  }).join('');
+  const days = (n) => `${n} ${n === 1 ? 'day' : 'days'}`;
+  const span = (entry) => entry.length ? `${date(entry.start)} - ${date(entry.end)}` : 'no active streak';
+  const body = `${panelHead(W, 'contribution streak', `${streak.from} to ${streak.to}`)}
+    ${statCell(0, top, cell, rowH, 'Contributions', streak.total.toLocaleString('en'), false, 't1', 'last 12 months')}
+    ${statCell(cell, top, cell, rowH, 'Current streak', days(streak.current.length), false, streak.current.length ? 'accent' : 't1', span(streak.current))}
+    ${statCell(cell * 2, top, W - cell * 2, rowH, 'Longest streak', days(streak.longest.length), true, 't1', span(streak.longest))}
+    ${squares}`;
+  return shell(W, H, `${github.username} contribution streak: ${streak.total} contributions, current streak ${days(streak.current.length)}, longest ${days(streak.longest.length)}`, body);
+}
+
+function statsSvg(stats) {
+  const top = 38;
+  const rowH = 90;
+  const cell = W / 4;
+  const items = [['Stars earned', stats.stars], ['Commits', stats.commits], ['Pull requests', stats.pulls], ['Issues', stats.issues]];
+  const cells = items.map(([label, value], index) => statCell(index * cell, top, cell, rowH, label, compact(value), index === items.length - 1)).join('');
+  const y0 = top + rowH;
+  const barX = 16;
+  const barW = W - 32;
+  const shades = [c.accent, c.auroraPalette[4], c.auroraPalette[3], c.auroraPalette[2], c.text3];
+  let used = 0;
+  let acc = 0;
+  const segments = stats.languages.map((language, index) => {
+    acc += language.share;
+    const x = barX + used;
+    const width = (index === stats.languages.length - 1 ? barW : Math.round(acc * barW)) - used;
+    used += width;
+    return `<rect x="${x}" y="${y0 + 40}" width="${width}" height="10" fill="${shades[index]}"/>`;
+  }).join('');
+  const legend = stats.languages.map((language, index) => {
+    const x = barX + index * (barW / 5);
+    return `<rect x="${x}" y="${y0 + 69}" width="8" height="8" fill="${shades[index]}"/><text x="${x + 14}" y="${y0 + 77}" class="code-sm t2">${esc(clamp(language.name, 12))} ${Math.round(language.share * 100)}%</text>`;
+  }).join('');
+  const body = `${panelHead(W, 'stats', `github.com/${github.username}`)}${cells}
+    <text x="${barX}" y="${y0 + 27}" class="micro t3">Top languages by repo</text>${segments}${legend}`;
+  return shell(W, y0 + 100, `${github.username} stats: ${stats.stars} stars, ${stats.commits} commits, ${stats.pulls} pull requests, ${stats.issues} issues. Top languages: ${stats.languages.map((l) => l.name).join(', ')}`, body);
+}
+
 function linkSvg(label, width = W / 4) {
   return shell(width, 68, label, `<text x="12" y="41" class="label t1">${esc(label)} ↗</text>`);
 }
 
 function readme(featured, more, links) {
+  const reposAlt = `Selected repositories by ${github.username}: ${more.map((repo) => `${repo.name} (${repo.language || 'mixed'}, ${repo.stargazers_count} stars) ${repo.description || ''}`.trim()).join('; ')}`;
+  const headerAlt = `${profile.name}, ${profile.role}. ${data.user.public_repos} repositories, ${data.user.followers} followers${data.rank ? `, #${data.rank.countryRank} open source contributor in ${data.rank.countryName}` : ''}`;
+  const extras = [data.streak && 'streak', data.stats && 'stats'].filter(Boolean)
+    .map((name) => `<a href="https://github.com/${github.username}"><img src="./profile/generated/${name}.svg?v=${assetVersion}" width="100%" alt="${esc(name === 'streak' ? `Contribution streak: ${data.streak.total} contributions in the past year, current streak ${data.streak.current.length} days, longest ${data.streak.longest.length} days` : `Stats: ${data.stats.stars} stars, ${data.stats.commits} commits, ${data.stats.pulls} pull requests, ${data.stats.issues} issues`)}"></a>\n\n`).join('');
   const cardWidth = layout.projectColumns === 2 ? '50%' : '100%';
   const separator = layout.projectColumns === 2 ? '' : '\n';
   const projects = featured.map((repo, index) => `<a href="${repo.__options.projectUrl?.trim() || repo.html_url}"><img src="./profile/generated/project-${String(index + 1).padStart(2, '0')}.svg?v=${assetVersion}" width="${cardWidth}" alt="${esc(repo.name)}: ${esc(repo.description || 'GitHub repository')}"></a>`).join(separator);
   const linkWidth = `${100 / links.length}%`;
   const linkCells = links.map((link, index) => `<a href="${link.url}"><img src="./profile/generated/link-${String(index + 1).padStart(2, '0')}.svg?v=${assetVersion}" width="${linkWidth}" alt="${esc(link.label)}"></a>`).join('');
   return `<!-- Generated by scripts/build-profile.mjs. Edit profile.config.json, not this file. -->
-<p align="center"><img src="./profile/generated/header.svg?v=${assetVersion}" width="100%" alt="${esc(profile.name)} — ${esc(profile.role)}"></p>
+<p align="center"><img src="./profile/generated/header.svg?v=${assetVersion}" width="100%" alt="${esc(headerAlt)}"></p>
 
 ${projects}
 
-<a href="https://github.com/${github.username}?tab=repositories"><img src="./profile/generated/repos.svg?v=${assetVersion}" width="100%" alt="Selected repositories by ${github.username}"></a>
+<a href="https://github.com/${github.username}?tab=repositories"><img src="./profile/generated/repos.svg?v=${assetVersion}" width="100%" alt="${esc(reposAlt)}"></a>
 
-<p align="center">${linkCells}</p>
+${extras}<p align="center">${linkCells}</p>
 `;
 }
 
@@ -411,6 +571,7 @@ await mkdir(OUT, { recursive: true });
 async function fetchBannerImage(url) {
   const response = await fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0 animated-profile-readme' } });
   if (!response.ok) throw new Error(`HTTP ${response.status}`);
+  if (Number(response.headers.get('content-length')) > 5_000_000) throw new Error('image exceeds 5 MB');
   const mime = (response.headers.get('content-type') || 'image/png').split(';')[0];
   if (!['image/png', 'image/jpeg', 'image/webp', 'image/gif'].includes(mime)) throw new Error(`unsupported content type ${mime}`);
   const bytes = Buffer.from(await response.arrayBuffer());
@@ -451,9 +612,19 @@ const featured = (await Promise.all(github.featuredRepos.map(async (entry) => {
 }))).filter(Boolean);
 const more = github.moreRepos.map((entry) => data.repos[repoKey(entry)]).filter(Boolean);
 const links = profile.links.slice(0, 6);
+assetVersion = createHash('sha256')
+  .update(JSON.stringify(config))
+  .update(JSON.stringify(data))
+  .update(generatorSource)
+  .update(monoFont)
+  .update(featured.map((repo) => repo.__banner?.data || '').join(''))
+  .digest('hex')
+  .slice(0, 10);
 await writeFile(path.join(OUT, 'header.svg'), headerSvg());
 await Promise.all(featured.map((repo, index) => writeFile(path.join(OUT, `project-${String(index + 1).padStart(2, '0')}.svg`), projectSvg(repo))));
 await writeFile(path.join(OUT, 'repos.svg'), reposSvg(more));
+if (data.streak) await writeFile(path.join(OUT, 'streak.svg'), streakSvg(data.streak));
+if (data.stats) await writeFile(path.join(OUT, 'stats.svg'), statsSvg(data.stats));
 await Promise.all(links.map((link, index) => writeFile(path.join(OUT, `link-${String(index + 1).padStart(2, '0')}.svg`), linkSvg(link.label, W / links.length))));
 await writeFile(path.join(ROOT, 'README.md'), readme(featured, more, links));
 console.log(`Built Sodium profile for @${github.username}: ${featured.length} featured + ${more.length} more repositories.`);

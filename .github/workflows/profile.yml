@@ -43,4 +43,5 @@ jobs:
           git add README.md profile/generated profile/github-cache.json
           git diff --cached --quiet && exit 0
           git commit -m "chore: refresh animated profile"
+          git pull --rebase origin main
           git push

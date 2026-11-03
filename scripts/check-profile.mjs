@@ -29,4 +29,11 @@ if (!['contain', 'cover'].includes(config.projects.bannerFit)) throw new Error('
 if ((config.motion?.speed || 0) <= 0) throw new Error('motion.speed must be greater than zero');
 if ((config.motion?.auroraFps || 0) < 1 || config.motion.auroraFps > 60) throw new Error('motion.auroraFps must be between 1 and 60');
 if (![1, 2].includes(config.layout?.projectColumns)) throw new Error('layout.projectColumns must be 1 or 2');
+if (!Number.isInteger(config.layout?.width) || config.layout.width < 880 || config.layout.width > 1200) throw new Error('layout.width must be an integer from 880 to 1200');
+if ((config.motion?.auroraDuration || 0) <= 0 || config.motion.auroraDuration > 30) throw new Error('motion.auroraDuration must be greater than zero and at most 30');
+const hex = /^#[0-9a-fA-F]{6}$/;
+if (!config.theme.auroraPalette.every((color) => typeof color === 'string' && hex.test(color))) throw new Error('theme.auroraPalette entries must be #RRGGBB colors');
+const badTheme = Object.entries(config.theme).filter(([key, value]) => key !== 'auroraPalette' && typeof value !== 'string').map(([key]) => key);
+if (badTheme.length) throw new Error(`theme colors must be strings: ${badTheme.join(', ')}`);
+if (config.rank?.enabled && !/^[A-Za-z]{2}$/.test(config.rank.country || '')) throw new Error('rank.country must be a two-letter country code');
 console.log('profile.config.json looks good.');
