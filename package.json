@@ -1,0 +1,11 @@
+{
+  "name": "findmalek-profile",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build-profile.mjs",
+    "check": "node scripts/check-profile.mjs"
+  },
+  "engines": { "node": ">=20" },
+  "license": "MIT"
+}
