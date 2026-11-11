@@ -1,11 +1,44 @@
 {
   "user": {
     "login": "FindMalek",
-    "public_repos": 62,
-    "followers": 97,
+    "public_repos": 63,
+    "followers": 96,
     "following": 128
   },
   "repos": {
+    "FindMalek/dukkani": {
+      "name": "dukkani",
+      "full_name": "FindMalek/dukkani",
+      "html_url": "https://github.com/FindMalek/dukkani",
+      "description": "Create your online shop in minutes — no code, no stress.",
+      "language": "TypeScript",
+      "stargazers_count": 10,
+      "forks_count": 4,
+      "updated_at": "2026-10-31T16:42:32Z",
+      "topics": []
+    },
+    "lyterion": {
+      "name": "lyterion",
+      "full_name": "FindMalek/lyterion",
+      "html_url": "https://github.com/FindMalek/lyterion",
+      "description": "Personal self-hosted tool that moves a whole Spotify library to Navidrome, finding every track across many sources",
+      "language": "TypeScript",
+      "stargazers_count": 0,
+      "forks_count": 0,
+      "updated_at": "2026-11-04T06:51:11Z",
+      "topics": []
+    },
+    "muslim-fasting": {
+      "name": "muslim-fasting",
+      "full_name": "FindMalek/muslim-fasting",
+      "html_url": "https://github.com/FindMalek/muslim-fasting",
+      "description": "Comprehensive Guide to Islamic Fasting Practices and Traditions",
+      "language": "TypeScript",
+      "stargazers_count": 3,
+      "forks_count": 1,
+      "updated_at": "2026-02-28T13:35:20Z",
+      "topics": []
+    },
     "sonaraem": {
       "name": "sonaraem",
       "full_name": "FindMalek/sonaraem",
@@ -14,8 +47,26 @@
       "language": "MDX",
       "stargazers_count": 4,
       "forks_count": 8,
-      "updated_at": "2026-11-10T04:55:51Z",
+      "updated_at": "2026-11-10T16:44:32Z",
       "topics": []
+    },
+    "FindMalek/guesswork": {
+      "name": "guesswork",
+      "full_name": "FindMalek/guesswork",
+      "html_url": "https://github.com/FindMalek/guesswork",
+      "description": "Fish-style zsh history autosuggestions, ranked by an AI model instead of prefix matching",
+      "language": "TypeScript",
+      "stargazers_count": 5,
+      "forks_count": 1,
+      "updated_at": "2026-11-10T15:27:03Z",
+      "topics": [
+        "ai",
+        "autocomplete",
+        "cli",
+        "terminal",
+        "typescript",
+        "zsh"
+      ]
     },
     "lodesong": {
       "name": "lodesong",
@@ -23,9 +74,9 @@
       "html_url": "https://github.com/FindMalek/lodesong",
       "description": "lodesong: a monochrome web music player for navidrome / subsonic",
       "language": "TypeScript",
-      "stargazers_count": 1,
+      "stargazers_count": 2,
       "forks_count": 0,
-      "updated_at": "2026-11-10T04:55:48Z",
+      "updated_at": "2026-11-11T07:49:31Z",
       "topics": [
         "bun",
         "music-player",
@@ -34,6 +85,17 @@
         "self-hosted",
         "subsonic"
       ]
+    },
+    "zero-locker": {
+      "name": "zero-locker",
+      "full_name": "FindMalek/zero-locker",
+      "html_url": "https://github.com/FindMalek/zero-locker",
+      "description": "Secure password management made simple.",
+      "language": "TypeScript",
+      "stargazers_count": 3,
+      "forks_count": 0,
+      "updated_at": "2026-07-21T01:05:19Z",
+      "topics": []
     },
     "Syncify": {
       "name": "Syncify",
@@ -58,17 +120,6 @@
         "track"
       ]
     },
-    "zero-locker": {
-      "name": "zero-locker",
-      "full_name": "FindMalek/zero-locker",
-      "html_url": "https://github.com/FindMalek/zero-locker",
-      "description": "Secure password management made simple.",
-      "language": "TypeScript",
-      "stargazers_count": 3,
-      "forks_count": 0,
-      "updated_at": "2026-07-21T01:05:19Z",
-      "topics": []
-    },
     "website": {
       "name": "website",
       "full_name": "FindMalek/website",
@@ -79,57 +130,6 @@
       "forks_count": 0,
       "updated_at": "2026-11-09T09:32:20Z",
       "topics": []
-    },
-    "lyterion": {
-      "name": "lyterion",
-      "full_name": "FindMalek/lyterion",
-      "html_url": "https://github.com/FindMalek/lyterion",
-      "description": "Personal self-hosted tool that moves a whole Spotify library to Navidrome, finding every track across many sources",
-      "language": "TypeScript",
-      "stargazers_count": 0,
-      "forks_count": 0,
-      "updated_at": "2026-11-04T06:51:11Z",
-      "topics": []
-    },
-    "FindMalek/dukkani": {
-      "name": "dukkani",
-      "full_name": "FindMalek/dukkani",
-      "html_url": "https://github.com/FindMalek/dukkani",
-      "description": "Create your online shop in minutes — no code, no stress.",
-      "language": "TypeScript",
-      "stargazers_count": 10,
-      "forks_count": 4,
-      "updated_at": "2026-10-31T16:42:32Z",
-      "topics": []
-    },
-    "muslim-fasting": {
-      "name": "muslim-fasting",
-      "full_name": "FindMalek/muslim-fasting",
-      "html_url": "https://github.com/FindMalek/muslim-fasting",
-      "description": "Comprehensive Guide to Islamic Fasting Practices and Traditions",
-      "language": "TypeScript",
-      "stargazers_count": 3,
-      "forks_count": 1,
-      "updated_at": "2026-02-28T13:35:20Z",
-      "topics": []
-    },
-    "FindMalek/guesswork": {
-      "name": "guesswork",
-      "full_name": "FindMalek/guesswork",
-      "html_url": "https://github.com/FindMalek/guesswork",
-      "description": "Fish-style zsh history autosuggestions, ranked by an AI model instead of prefix matching",
-      "language": "TypeScript",
-      "stargazers_count": 5,
-      "forks_count": 1,
-      "updated_at": "2026-11-10T04:55:49Z",
-      "topics": [
-        "ai",
-        "autocomplete",
-        "cli",
-        "terminal",
-        "typescript",
-        "zsh"
-      ]
     }
   },
   "rank": {
@@ -139,11 +139,11 @@
     "total": 213
   },
   "streak": {
-    "total": 5179,
+    "total": 5293,
     "current": {
-      "length": 73,
+      "length": 74,
       "start": "2026-08-30",
-      "end": "2026-11-10"
+      "end": "2026-11-11"
     },
     "longest": {
       "length": 79,
@@ -151,7 +151,7 @@
       "end": "2026-05-05"
     },
     "from": "2025-11-09",
-    "to": "2026-11-10",
+    "to": "2026-11-11",
     "levels": [
       0,
       1,
@@ -519,30 +519,31 @@
       1,
       2,
       2,
+      3,
       1
     ]
   },
   "stats": {
-    "stars": 80,
-    "commits": 3711,
-    "pulls": 1147,
-    "issues": 1340,
+    "stars": 81,
+    "commits": 3736,
+    "pulls": 1174,
+    "issues": 1381,
     "languages": [
       {
         "name": "TypeScript",
-        "share": 0.8461538461538461
+        "share": 0.85
       },
       {
         "name": "Python",
-        "share": 0.10256410256410256
+        "share": 0.1
       },
       {
         "name": "JavaScript",
-        "share": 0.02564102564102564
+        "share": 0.025
       },
       {
         "name": "MDX",
-        "share": 0.02564102564102564
+        "share": 0.025
       }
     ]
   }
