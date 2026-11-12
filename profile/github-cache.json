@@ -1,7 +1,7 @@
 {
   "user": {
     "login": "FindMalek",
-    "public_repos": 63,
+    "public_repos": 64,
     "followers": 96,
     "following": 128
   },
@@ -17,39 +17,6 @@
       "updated_at": "2026-10-31T16:42:32Z",
       "topics": []
     },
-    "lyterion": {
-      "name": "lyterion",
-      "full_name": "FindMalek/lyterion",
-      "html_url": "https://github.com/FindMalek/lyterion",
-      "description": "Personal self-hosted tool that moves a whole Spotify library to Navidrome, finding every track across many sources",
-      "language": "TypeScript",
-      "stargazers_count": 0,
-      "forks_count": 0,
-      "updated_at": "2026-11-04T06:51:11Z",
-      "topics": []
-    },
-    "muslim-fasting": {
-      "name": "muslim-fasting",
-      "full_name": "FindMalek/muslim-fasting",
-      "html_url": "https://github.com/FindMalek/muslim-fasting",
-      "description": "Comprehensive Guide to Islamic Fasting Practices and Traditions",
-      "language": "TypeScript",
-      "stargazers_count": 3,
-      "forks_count": 1,
-      "updated_at": "2026-02-28T13:35:20Z",
-      "topics": []
-    },
-    "sonaraem": {
-      "name": "sonaraem",
-      "full_name": "FindMalek/sonaraem",
-      "html_url": "https://github.com/FindMalek/sonaraem",
-      "description": "A personal music intelligence system that continuously classifies, clusters, and optimizes your Spotify library.",
-      "language": "MDX",
-      "stargazers_count": 4,
-      "forks_count": 8,
-      "updated_at": "2026-11-10T16:44:32Z",
-      "topics": []
-    },
     "FindMalek/guesswork": {
       "name": "guesswork",
       "full_name": "FindMalek/guesswork",
@@ -58,7 +25,7 @@
       "language": "TypeScript",
       "stargazers_count": 5,
       "forks_count": 1,
-      "updated_at": "2026-11-10T15:27:03Z",
+      "updated_at": "2026-11-11T15:57:40Z",
       "topics": [
         "ai",
         "autocomplete",
@@ -67,6 +34,17 @@
         "typescript",
         "zsh"
       ]
+    },
+    "website": {
+      "name": "website",
+      "full_name": "FindMalek/website",
+      "html_url": "https://github.com/FindMalek/website",
+      "description": " Personal portfolio website, build with NextJs, TypeScript & TailwindCSS",
+      "language": "TypeScript",
+      "stargazers_count": 5,
+      "forks_count": 0,
+      "updated_at": "2026-11-09T09:32:20Z",
+      "topics": []
     },
     "lodesong": {
       "name": "lodesong",
@@ -97,6 +75,28 @@
       "updated_at": "2026-07-21T01:05:19Z",
       "topics": []
     },
+    "sonaraem": {
+      "name": "sonaraem",
+      "full_name": "FindMalek/sonaraem",
+      "html_url": "https://github.com/FindMalek/sonaraem",
+      "description": "A personal music intelligence system that continuously classifies, clusters, and optimizes your Spotify library.",
+      "language": "MDX",
+      "stargazers_count": 4,
+      "forks_count": 8,
+      "updated_at": "2026-11-11T14:01:59Z",
+      "topics": []
+    },
+    "muslim-fasting": {
+      "name": "muslim-fasting",
+      "full_name": "FindMalek/muslim-fasting",
+      "html_url": "https://github.com/FindMalek/muslim-fasting",
+      "description": "Comprehensive Guide to Islamic Fasting Practices and Traditions",
+      "language": "TypeScript",
+      "stargazers_count": 3,
+      "forks_count": 1,
+      "updated_at": "2026-02-28T13:35:20Z",
+      "topics": []
+    },
     "Syncify": {
       "name": "Syncify",
       "full_name": "FindMalek/Syncify",
@@ -120,15 +120,15 @@
         "track"
       ]
     },
-    "website": {
-      "name": "website",
-      "full_name": "FindMalek/website",
-      "html_url": "https://github.com/FindMalek/website",
-      "description": " Personal portfolio website, build with NextJs, TypeScript & TailwindCSS",
+    "lyterion": {
+      "name": "lyterion",
+      "full_name": "FindMalek/lyterion",
+      "html_url": "https://github.com/FindMalek/lyterion",
+      "description": "Personal self-hosted tool that moves a whole Spotify library to Navidrome, finding every track across many sources",
       "language": "TypeScript",
-      "stargazers_count": 5,
+      "stargazers_count": 0,
       "forks_count": 0,
-      "updated_at": "2026-11-09T09:32:20Z",
+      "updated_at": "2026-11-04T06:51:11Z",
       "topics": []
     }
   },
@@ -139,11 +139,11 @@
     "total": 213
   },
   "streak": {
-    "total": 5293,
+    "total": 5355,
     "current": {
-      "length": 74,
+      "length": 75,
       "start": "2026-08-30",
-      "end": "2026-11-11"
+      "end": "2026-11-12"
     },
     "longest": {
       "length": 79,
@@ -151,7 +151,7 @@
       "end": "2026-05-05"
     },
     "from": "2025-11-09",
-    "to": "2026-11-11",
+    "to": "2026-11-12",
     "levels": [
       0,
       1,
@@ -520,14 +520,15 @@
       2,
       2,
       3,
+      2,
       1
     ]
   },
   "stats": {
     "stars": 81,
-    "commits": 3736,
-    "pulls": 1174,
-    "issues": 1381,
+    "commits": 3749,
+    "pulls": 1188,
+    "issues": 1396,
     "languages": [
       {
         "name": "TypeScript",
