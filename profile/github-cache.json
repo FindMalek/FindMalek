@@ -1,7 +1,7 @@
 {
   "user": {
     "login": "FindMalek",
-    "public_repos": 64,
+    "public_repos": 65,
     "followers": 96,
     "following": 128
   },
@@ -17,53 +17,6 @@
       "updated_at": "2026-10-31T16:42:32Z",
       "topics": []
     },
-    "FindMalek/guesswork": {
-      "name": "guesswork",
-      "full_name": "FindMalek/guesswork",
-      "html_url": "https://github.com/FindMalek/guesswork",
-      "description": "Fish-style zsh history autosuggestions, ranked by an AI model instead of prefix matching",
-      "language": "TypeScript",
-      "stargazers_count": 5,
-      "forks_count": 1,
-      "updated_at": "2026-11-11T15:57:40Z",
-      "topics": [
-        "ai",
-        "autocomplete",
-        "cli",
-        "terminal",
-        "typescript",
-        "zsh"
-      ]
-    },
-    "website": {
-      "name": "website",
-      "full_name": "FindMalek/website",
-      "html_url": "https://github.com/FindMalek/website",
-      "description": " Personal portfolio website, build with NextJs, TypeScript & TailwindCSS",
-      "language": "TypeScript",
-      "stargazers_count": 5,
-      "forks_count": 0,
-      "updated_at": "2026-11-09T09:32:20Z",
-      "topics": []
-    },
-    "lodesong": {
-      "name": "lodesong",
-      "full_name": "FindMalek/lodesong",
-      "html_url": "https://github.com/FindMalek/lodesong",
-      "description": "lodesong: a monochrome web music player for navidrome / subsonic",
-      "language": "TypeScript",
-      "stargazers_count": 2,
-      "forks_count": 0,
-      "updated_at": "2026-11-11T07:49:31Z",
-      "topics": [
-        "bun",
-        "music-player",
-        "navidrome",
-        "react",
-        "self-hosted",
-        "subsonic"
-      ]
-    },
     "zero-locker": {
       "name": "zero-locker",
       "full_name": "FindMalek/zero-locker",
@@ -73,28 +26,6 @@
       "stargazers_count": 3,
       "forks_count": 0,
       "updated_at": "2026-07-21T01:05:19Z",
-      "topics": []
-    },
-    "sonaraem": {
-      "name": "sonaraem",
-      "full_name": "FindMalek/sonaraem",
-      "html_url": "https://github.com/FindMalek/sonaraem",
-      "description": "A personal music intelligence system that continuously classifies, clusters, and optimizes your Spotify library.",
-      "language": "MDX",
-      "stargazers_count": 4,
-      "forks_count": 8,
-      "updated_at": "2026-11-11T14:01:59Z",
-      "topics": []
-    },
-    "muslim-fasting": {
-      "name": "muslim-fasting",
-      "full_name": "FindMalek/muslim-fasting",
-      "html_url": "https://github.com/FindMalek/muslim-fasting",
-      "description": "Comprehensive Guide to Islamic Fasting Practices and Traditions",
-      "language": "TypeScript",
-      "stargazers_count": 3,
-      "forks_count": 1,
-      "updated_at": "2026-02-28T13:35:20Z",
       "topics": []
     },
     "Syncify": {
@@ -120,6 +51,64 @@
         "track"
       ]
     },
+    "lodesong": {
+      "name": "lodesong",
+      "full_name": "FindMalek/lodesong",
+      "html_url": "https://github.com/FindMalek/lodesong",
+      "description": "lodesong: a monochrome web music player for navidrome / subsonic",
+      "language": "TypeScript",
+      "stargazers_count": 2,
+      "forks_count": 0,
+      "updated_at": "2026-11-11T07:49:31Z",
+      "topics": [
+        "bun",
+        "music-player",
+        "navidrome",
+        "react",
+        "self-hosted",
+        "subsonic"
+      ]
+    },
+    "sonaraem": {
+      "name": "sonaraem",
+      "full_name": "FindMalek/sonaraem",
+      "html_url": "https://github.com/FindMalek/sonaraem",
+      "description": "A personal music intelligence system that continuously classifies, clusters, and optimizes your Spotify library.",
+      "language": "MDX",
+      "stargazers_count": 4,
+      "forks_count": 8,
+      "updated_at": "2026-11-12T15:04:22Z",
+      "topics": []
+    },
+    "muslim-fasting": {
+      "name": "muslim-fasting",
+      "full_name": "FindMalek/muslim-fasting",
+      "html_url": "https://github.com/FindMalek/muslim-fasting",
+      "description": "Comprehensive Guide to Islamic Fasting Practices and Traditions",
+      "language": "TypeScript",
+      "stargazers_count": 3,
+      "forks_count": 1,
+      "updated_at": "2026-02-28T13:35:20Z",
+      "topics": []
+    },
+    "FindMalek/guesswork": {
+      "name": "guesswork",
+      "full_name": "FindMalek/guesswork",
+      "html_url": "https://github.com/FindMalek/guesswork",
+      "description": "Fish-style zsh history autosuggestions, ranked by an AI model instead of prefix matching",
+      "language": "TypeScript",
+      "stargazers_count": 5,
+      "forks_count": 1,
+      "updated_at": "2026-11-12T16:49:25Z",
+      "topics": [
+        "ai",
+        "autocomplete",
+        "cli",
+        "terminal",
+        "typescript",
+        "zsh"
+      ]
+    },
     "lyterion": {
       "name": "lyterion",
       "full_name": "FindMalek/lyterion",
@@ -130,6 +119,17 @@
       "forks_count": 0,
       "updated_at": "2026-11-04T06:51:11Z",
       "topics": []
+    },
+    "website": {
+      "name": "website",
+      "full_name": "FindMalek/website",
+      "html_url": "https://github.com/FindMalek/website",
+      "description": " Personal portfolio website, build with NextJs, TypeScript & TailwindCSS",
+      "language": "TypeScript",
+      "stargazers_count": 5,
+      "forks_count": 0,
+      "updated_at": "2026-11-09T09:32:20Z",
+      "topics": []
     }
   },
   "rank": {
@@ -139,11 +139,11 @@
     "total": 213
   },
   "streak": {
-    "total": 5355,
+    "total": 5644,
     "current": {
-      "length": 75,
+      "length": 76,
       "start": "2026-08-30",
-      "end": "2026-11-12"
+      "end": "2026-11-13"
     },
     "longest": {
       "length": 79,
@@ -151,7 +151,7 @@
       "end": "2026-05-05"
     },
     "from": "2025-11-09",
-    "to": "2026-11-12",
+    "to": "2026-11-13",
     "levels": [
       0,
       1,
@@ -490,7 +490,7 @@
       1,
       1,
       1,
-      4,
+      3,
       3,
       2,
       2,
@@ -521,14 +521,15 @@
       2,
       3,
       2,
-      1
+      3,
+      4
     ]
   },
   "stats": {
     "stars": 81,
-    "commits": 3749,
-    "pulls": 1188,
-    "issues": 1396,
+    "commits": 3781,
+    "pulls": 1223,
+    "issues": 1544,
     "languages": [
       {
         "name": "TypeScript",
