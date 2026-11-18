@@ -6,6 +6,80 @@
     "following": 130
   },
   "repos": {
+    "FindMalek/dukkani": {
+      "name": "dukkani",
+      "full_name": "FindMalek/dukkani",
+      "html_url": "https://github.com/FindMalek/dukkani",
+      "description": "Create your online shop in minutes — no code, no stress.",
+      "language": "TypeScript",
+      "stargazers_count": 10,
+      "forks_count": 4,
+      "updated_at": "2026-10-31T16:42:32Z",
+      "topics": []
+    },
+    "website": {
+      "name": "website",
+      "full_name": "FindMalek/website",
+      "html_url": "https://github.com/FindMalek/website",
+      "description": " Personal portfolio website, build with NextJs, TypeScript & TailwindCSS",
+      "language": "TypeScript",
+      "stargazers_count": 5,
+      "forks_count": 0,
+      "updated_at": "2026-11-09T09:32:20Z",
+      "topics": []
+    },
+    "Syncify": {
+      "name": "Syncify",
+      "full_name": "FindMalek/Syncify",
+      "html_url": "https://github.com/FindMalek/Syncify",
+      "description": "Syncify is an open-source application, that lets you download Tracks, Albums, Playlist from Spotify.",
+      "language": "Python",
+      "stargazers_count": 30,
+      "forks_count": 2,
+      "updated_at": "2026-10-25T18:16:46Z",
+      "topics": [
+        "album-art",
+        "downloader",
+        "flac",
+        "metadata",
+        "mp3",
+        "music",
+        "playlist",
+        "python",
+        "savify",
+        "spotify",
+        "track"
+      ]
+    },
+    "sonaraem": {
+      "name": "sonaraem",
+      "full_name": "FindMalek/sonaraem",
+      "html_url": "https://github.com/FindMalek/sonaraem",
+      "description": "A personal music intelligence system that continuously classifies, clusters, and optimizes your Spotify library.",
+      "language": "MDX",
+      "stargazers_count": 4,
+      "forks_count": 8,
+      "updated_at": "2026-11-12T15:04:22Z",
+      "topics": []
+    },
+    "lodesong": {
+      "name": "lodesong",
+      "full_name": "FindMalek/lodesong",
+      "html_url": "https://github.com/FindMalek/lodesong",
+      "description": "lodesong: a monochrome web music player for navidrome / subsonic",
+      "language": "TypeScript",
+      "stargazers_count": 2,
+      "forks_count": 0,
+      "updated_at": "2026-11-11T07:49:31Z",
+      "topics": [
+        "bun",
+        "music-player",
+        "navidrome",
+        "react",
+        "self-hosted",
+        "subsonic"
+      ]
+    },
     "zero-locker": {
       "name": "zero-locker",
       "full_name": "FindMalek/zero-locker",
@@ -35,62 +109,6 @@
         "zsh"
       ]
     },
-    "website": {
-      "name": "website",
-      "full_name": "FindMalek/website",
-      "html_url": "https://github.com/FindMalek/website",
-      "description": " Personal portfolio website, build with NextJs, TypeScript & TailwindCSS",
-      "language": "TypeScript",
-      "stargazers_count": 5,
-      "forks_count": 0,
-      "updated_at": "2026-11-09T09:32:20Z",
-      "topics": []
-    },
-    "FindMalek/dukkani": {
-      "name": "dukkani",
-      "full_name": "FindMalek/dukkani",
-      "html_url": "https://github.com/FindMalek/dukkani",
-      "description": "Create your online shop in minutes — no code, no stress.",
-      "language": "TypeScript",
-      "stargazers_count": 10,
-      "forks_count": 4,
-      "updated_at": "2026-10-31T16:42:32Z",
-      "topics": []
-    },
-    "sonaraem": {
-      "name": "sonaraem",
-      "full_name": "FindMalek/sonaraem",
-      "html_url": "https://github.com/FindMalek/sonaraem",
-      "description": "A personal music intelligence system that continuously classifies, clusters, and optimizes your Spotify library.",
-      "language": "MDX",
-      "stargazers_count": 4,
-      "forks_count": 8,
-      "updated_at": "2026-11-12T15:04:22Z",
-      "topics": []
-    },
-    "Syncify": {
-      "name": "Syncify",
-      "full_name": "FindMalek/Syncify",
-      "html_url": "https://github.com/FindMalek/Syncify",
-      "description": "Syncify is an open-source application, that lets you download Tracks, Albums, Playlist from Spotify.",
-      "language": "Python",
-      "stargazers_count": 30,
-      "forks_count": 2,
-      "updated_at": "2026-10-25T18:16:46Z",
-      "topics": [
-        "album-art",
-        "downloader",
-        "flac",
-        "metadata",
-        "mp3",
-        "music",
-        "playlist",
-        "python",
-        "savify",
-        "spotify",
-        "track"
-      ]
-    },
     "muslim-fasting": {
       "name": "muslim-fasting",
       "full_name": "FindMalek/muslim-fasting",
@@ -101,24 +119,6 @@
       "forks_count": 1,
       "updated_at": "2026-02-28T13:35:20Z",
       "topics": []
-    },
-    "lodesong": {
-      "name": "lodesong",
-      "full_name": "FindMalek/lodesong",
-      "html_url": "https://github.com/FindMalek/lodesong",
-      "description": "lodesong: a monochrome web music player for navidrome / subsonic",
-      "language": "TypeScript",
-      "stargazers_count": 2,
-      "forks_count": 0,
-      "updated_at": "2026-11-11T07:49:31Z",
-      "topics": [
-        "bun",
-        "music-player",
-        "navidrome",
-        "react",
-        "self-hosted",
-        "subsonic"
-      ]
     },
     "lyterion": {
       "name": "lyterion",
@@ -139,19 +139,19 @@
     "total": 213
   },
   "streak": {
-    "total": 5990,
+    "total": 5997,
     "current": {
-      "length": 80,
+      "length": 81,
       "start": "2026-08-30",
-      "end": "2026-11-17"
+      "end": "2026-11-18"
     },
     "longest": {
-      "length": 80,
+      "length": 81,
       "start": "2026-08-30",
-      "end": "2026-11-17"
+      "end": "2026-11-18"
     },
     "from": "2025-11-16",
-    "to": "2026-11-17",
+    "to": "2026-11-18",
     "levels": [
       1,
       1,
@@ -519,12 +519,13 @@
       1,
       4,
       2,
+      1,
       1
     ]
   },
   "stats": {
     "stars": 82,
-    "commits": 3875,
+    "commits": 3874,
     "pulls": 1324,
     "issues": 1700,
     "languages": [
