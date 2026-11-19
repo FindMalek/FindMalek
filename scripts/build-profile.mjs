@@ -224,31 +224,31 @@ async function fetchBlog() {
   return posts.sort((a, b) => b.published.localeCompare(a.published));
 }
 
-const byStars = (a, b) => b.stargazers_count - a.stargazers_count || b.pushed_at.localeCompare(a.pushed_at);
+const byPushed = (a, b) => b.pushed_at.localeCompare(a.pushed_at);
+const slim = (repo) => ({
+  name: repo.name,
+  full_name: repo.full_name,
+  html_url: repo.html_url,
+  homepage: repo.homepage || '',
+  description: repo.description,
+  language: repo.language,
+  stargazers_count: repo.stargazers_count,
+  pushed_at: repo.pushed_at,
+});
 
 async function loadGithubData() {
   try {
     const rawUser = await githubJson(`/users/${github.username}`);
     const user = { login: rawUser.login, public_repos: rawUser.public_repos, followers: rawUser.followers, following: rawUser.following, created_at: rawUser.created_at };
     const own = await fetchOwnRepos();
-    const excluded = new Set(github.exclude.map((name) => name.toLowerCase()));
-    const repos = own
-      .filter((repo) => !repo.archived && !excluded.has(repo.name.toLowerCase()))
-      .sort(byStars)
-      .slice(0, github.featured + github.list)
-      .map((repo) => ({
-        name: repo.name,
-        full_name: repo.full_name,
-        html_url: repo.html_url,
-        homepage: repo.homepage || '',
-        description: repo.description,
-        language: repo.language,
-        stargazers_count: repo.stargazers_count,
-        pushed_at: repo.pushed_at,
-      }));
+    const excluded = new Set((github.exclude ?? []).map((name) => name.toLowerCase()));
+    const visible = own.filter((repo) => !repo.archived && !excluded.has(repo.name.toLowerCase()));
+    const featured = github.featured.map((name) => visible.find((repo) => repo.name.toLowerCase() === name.toLowerCase())).filter(Boolean);
+    const rest = visible.filter((repo) => !featured.includes(repo)).sort(byPushed).slice(0, github.list);
+    const repos = [...featured, ...rest].map(slim);
     if (!repos.length) throw new Error('no repositories found');
     const activity = {};
-    await Promise.all(repos.slice(0, github.featured).map(async (repo) => {
+    await Promise.all(repos.slice(0, github.featured.length).map(async (repo) => {
       activity[repo.full_name] = await safely(`commit activity for ${repo.name}`, () => fetchActivity(repo.full_name), prevCache.activity?.[repo.full_name]);
     }));
     const rank = config.rank?.enabled ? await safely('gitista rank', fetchRank, prevCache.rank) : null;
@@ -263,7 +263,10 @@ async function loadGithubData() {
   } catch (error) {
     if (!prevCache.user || !prevCache.repos?.length) throw error;
     console.warn(`GitHub fetch failed; using cached data: ${error.message}`);
-    return prevCache;
+    const excluded = new Set((github.exclude ?? []).map((name) => name.toLowerCase()));
+    const cached = prevCache.repos.filter((repo) => !excluded.has(repo.name.toLowerCase()));
+    const pinned = github.featured.map((name) => cached.find((repo) => repo.name.toLowerCase() === name.toLowerCase())).filter(Boolean);
+    return { ...prevCache, repos: [...pinned, ...cached.filter((repo) => !pinned.includes(repo)).sort(byPushed)] };
   }
 }
 
@@ -458,60 +461,77 @@ function resample(values, cols, passes, power) {
 const SCENE_H = 300;
 const sceneCols = Math.ceil(W / CELL);
 const sceneRows = Math.ceil(SCENE_H / CELL);
-const moon = { col: sceneCols * 0.16, row: sceneRows * 0.25, radius: sceneRows * 0.095 };
-const sceneAmps = data.history ? resample(data.history.weeks, sceneCols, 2, 1.15) : Array(sceneCols).fill(0);
-const surfaceAt = (col, phase) => {
-  const a = sceneAmps[col];
-  return sceneRows * 0.74 - a * sceneRows * 0.5 + Math.sin(col * 0.42 + phase) * (0.5 + 1.4 * a) + Math.sin(col * 0.13 - phase * 0.7) * (0.6 + 1.8 * a);
-};
+const axisRow = sceneRows * 0.52;
+const sceneAmps = data.history ? resample(data.history.weeks, sceneCols, 4, 1.1) : Array(sceneCols).fill(0);
+const halfHeight = (col) => 1.2 + (col / sceneCols) * 3.2 + sceneAmps[col] * sceneRows * 0.4;
+const peakWeek = data.history ? data.history.weeks.indexOf(Math.max(...data.history.weeks)) : -1;
+const nova = peakWeek < 0 ? null : { col: Math.min(sceneCols - 8, Math.max(8, Math.round((peakWeek + 0.5) / data.history.weeks.length * sceneCols))), row: axisRow };
+const galaxies = [];
+for (let seed = 0; galaxies.length < 7 && seed < 400; seed++) {
+  const col = Math.floor(sceneCols * (0.12 + 0.84 * hashNoise(seed, 1, 91)));
+  const radius = 5 + 4 * hashNoise(seed, 2, 92);
+  const room = halfHeight(col) - radius - 2;
+  if (room < 2 || (nova && Math.abs(col - nova.col) < 18) || galaxies.some((other) => Math.abs(other.col - col) < 19)) continue;
+  galaxies.push({ col, row: axisRow + (hashNoise(seed, 3, 93) * 2 - 1) * room, radius, tilt: hashNoise(seed, 4, 94) * Math.PI, flat: 0.45 + 0.4 * hashNoise(seed, 5, 95), spin: hashNoise(seed, 6, 96) > 0.5 ? 1 : -1 });
+}
 
-function oceanFrame(phase) {
+function universeFrame(phase) {
   const tones = new Float32Array(sceneCols * sceneRows);
-  const surf = Float32Array.from({ length: sceneCols }, (_, col) => surfaceAt(col, phase));
-  const glitterSeed = 40 + Math.floor(phase * 2.5);
+  const put = (col, row, tone) => {
+    col = Math.round(col);
+    row = Math.round(row);
+    if (col >= 0 && col < sceneCols && row >= 0 && row < sceneRows) tones[row * sceneCols + col] = Math.max(tones[row * sceneCols + col], tone);
+  };
   for (let row = 0; row < sceneRows; row++) {
     for (let col = 0; col < sceneCols; col++) {
-      const s = surf[col];
+      const hh = halfHeight(col);
+      const dy = Math.abs(row - axisRow);
       const u = col / sceneCols;
       const v = row / sceneRows;
       let tone = 0;
-      if (row < s - 0.5) {
-        const band = Math.exp(-(((v - (0.6 - 0.5 * u)) / 0.11) ** 2));
-        const cloud = smooth01(0.35, 0.8, fbm(u * 14 + 3, v * 7 + 11, 5));
-        tone = 0.38 * band * cloud + 0.14 * Math.exp(-(s - row) / 5);
-        const near = Math.min(1, (s - row) / (sceneRows * 0.25));
-        if (hashNoise(col, row, 7) < (0.018 + 0.05 * band) * (0.4 + 0.6 * near)) {
+      if (dy < hh) {
+        const depth = dy / hh;
+        const cloud = smooth01(0.38, 0.82, fbm(u * 11 + phase * 0.02, v * 6 + 4, 5));
+        tone = (0.1 + 0.3 * cloud) * (1 - 0.55 * depth * depth) + 0.12 * Math.exp(-(1 - depth) * hh / 2.5);
+        if (hashNoise(col, row, 7) < 0.06) {
           const b = hashNoise(col, row, 19);
-          tone = Math.max(tone, (0.4 + 0.6 * b) * (0.62 + 0.38 * Math.sin(phase * (1.2 + 2.5 * b) + b * 60)));
+          tone = Math.max(tone, (0.35 + 0.65 * b) * (0.65 + 0.35 * Math.sin(phase * (1.2 + 2.2 * b) + b * 60)));
         }
-        const dist = Math.hypot(col - moon.col, row - moon.row);
-        if (dist < moon.radius * 2.3) tone = Math.max(tone, 0.26 * Math.exp(-((dist / (moon.radius * 2.3)) ** 2)));
-        if (dist <= moon.radius) {
-          const lit = Math.hypot(col - (moon.col + moon.radius * 0.42), row - (moon.row - moon.radius * 0.2)) > moon.radius * 0.92;
-          tone = lit ? 1 : Math.max(tone, 0.12);
-        }
+        if (hh - dy < 1) tone = 1;
       } else {
-        const d = Math.max(0, row - s);
-        const a = sceneAmps[col];
-        const fade = Math.exp(-d / (sceneRows * 0.55));
-        const strata = 0.5 + 0.5 * Math.sin(d * 0.95 - phase * 1.6 + col * 0.05 + Math.sin(col * 0.11 + phase * 0.5) * 1.5);
-        tone = 0.78 * Math.exp(-d / (2.2 + 9 * a)) + 0.2 * strata * fade * (0.45 + a) + 0.07 * fade;
-        if (row - s < 0.9) tone = 1;
-        const gx = (col - moon.col) / (4 + d * 0.22);
-        if (hashNoise(col, row, glitterSeed) < Math.exp(-gx * gx) * Math.exp(-d / (sceneRows * 0.45)) * 0.55) tone = Math.max(tone, 0.95);
+        tone = 0.2 * Math.exp(-(dy - hh) / 2.2);
+        if (hashNoise(col, row, 11) < 0.006) tone = Math.max(tone, 0.25 + 0.35 * hashNoise(col, row, 13));
       }
       tones[row * sceneCols + col] = tone;
     }
   }
-  for (let row = 3; row < sceneRows * 0.55; row++) {
-    for (let col = 3; col < sceneCols - 3; col++) {
-      if (hashNoise(col, row, 31) >= 0.0022 || row > surf[col] - 6 || Math.hypot(col - moon.col, row - moon.row) < moon.radius * 2.5) continue;
-      const twinkle = 0.7 + 0.3 * Math.sin(phase * 2 + col);
-      const long = hashNoise(col, row, 33) > 0.5;
-      const set = (dx, dy, tone) => { tones[(row + dy) * sceneCols + col + dx] = Math.max(tones[(row + dy) * sceneCols + col + dx], tone * twinkle); };
-      set(0, 0, 1);
-      for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) set(dx, dy, 0.75);
-      if (long) for (const [dx, dy] of [[2, 0], [-2, 0], [0, 2], [0, -2]]) set(dx, dy, 0.45);
+  for (let col = 0; col < 14; col++) for (let row = Math.floor(axisRow - 8); row <= Math.ceil(axisRow + 8); row++) put(col, row, Math.exp(-Math.hypot(col, row - axisRow) / 3.2) * (0.9 + 0.1 * Math.sin(phase * 2)));
+  for (const galaxy of galaxies) {
+    const reach = Math.ceil(galaxy.radius * 1.7);
+    for (let oy = -reach; oy <= reach; oy++) {
+      for (let ox = -reach; ox <= reach; ox++) {
+        const x = ox * Math.cos(galaxy.tilt) + oy * Math.sin(galaxy.tilt);
+        const y = (-ox * Math.sin(galaxy.tilt) + oy * Math.cos(galaxy.tilt)) / galaxy.flat;
+        const r = Math.hypot(x, y);
+        if (r > galaxy.radius * 1.5) continue;
+        const arm = 0.5 + 0.5 * Math.cos(2 * (Math.atan2(y, x) - Math.log(r + 1) * 2.1 * galaxy.spin - phase * 0.5 * galaxy.spin));
+        const falloff = Math.exp(-r / (galaxy.radius * 0.7));
+        put(galaxy.col + ox, galaxy.row + oy, Math.min(1, falloff * (0.45 + 1.1 * arm) + 0.95 * Math.exp(-r * r / 2.4)));
+      }
+    }
+  }
+  if (nova) {
+    const pulse = 0.5 + 0.5 * Math.sin(phase);
+    const ring = 5 + 9 * pulse;
+    const reach = 22;
+    for (let oy = -reach; oy <= reach; oy++) {
+      for (let ox = -reach; ox <= reach; ox++) {
+        const r = Math.hypot(ox, oy * 1.15);
+        const glow = 0.55 * Math.exp(-r / (4 + 3 * pulse));
+        const shell = Math.exp(-(((r - ring) / 1.1) ** 2)) * (0.9 - 0.45 * pulse);
+        const ray = (Math.abs(ox) < 1 || Math.abs(oy) < 1 || Math.abs(Math.abs(ox) - Math.abs(oy)) < 1) && r < 7 + 8 * pulse ? 0.85 * (1 - r / (8 + 8 * pulse)) : 0;
+        put(nova.col + ox, nova.row + oy, Math.max(glow, shell, ray, r < 2 ? 1 : 0));
+      }
     }
   }
   const pixels = new Uint8Array(sceneCols * sceneRows);
@@ -519,41 +539,16 @@ function oceanFrame(phase) {
   return { pixels, data: palettePng(pixels, sceneCols, sceneRows, c.ditherPalette) };
 }
 
-function ocean() {
+function universe() {
   const image = (data, extra = '') => `<image x="0" y="0" width="${W}" height="${SCENE_H}" preserveAspectRatio="none" href="data:image/png;base64,${data}" ${extra}/>`;
   if (!effects.dither) return `<rect width="${W}" height="${SCENE_H}" fill="${c.selected}"/>`;
   const steps = Math.max(2, Math.round(motion.sceneDuration * motion.sceneFps));
   const count = effects.animatedScene && motion.enabled ? Math.floor(steps / 2) + 1 : 1;
-  const frames = Array.from({ length: count }, (_, index) => oceanFrame(count === 1 ? 0 : index * Math.PI * 2 / (count - 1)));
+  const frames = Array.from({ length: count }, (_, index) => universeFrame(count === 1 ? Math.PI / 2 : index * Math.PI * 2 / (count - 1)));
   if (count === 1) return image(frames[0].data);
   const order = [...Array(count).keys(), ...Array.from({ length: count - 2 }, (_, i) => count - 2 - i)];
   const animated = animatedPalettePng(frames, order, sceneCols, sceneRows, c.ditherPalette, motion.sceneFps * speed);
   return image(animated, 'class="motion"') + image(frames[0].data, 'class="reduced" style="display:none"');
-}
-
-function chartImage(width, height, activity) {
-  const cols = Math.ceil(width / CELL);
-  const rows = Math.ceil(height / CELL);
-  const amps = resample(activity?.weeks?.length ? activity.weeks : [0], cols, 3, 1.1);
-  const top = 8;
-  const pixels = new Uint8Array(cols * rows);
-  for (let col = 0; col < cols; col++) {
-    const s = rows - 3 - amps[col] * (rows - top - 5);
-    for (let row = 0; row < rows; row++) {
-      let tone = 0;
-      if (row < s - 0.5) {
-        if (hashNoise(col, row, 61) < 0.014 && row > top - 3) tone = 0.3 + 0.55 * hashNoise(col, row, 63);
-      } else {
-        const d = Math.max(0, row - s);
-        const fade = Math.exp(-d / (rows * 0.5));
-        const strata = 0.5 + 0.5 * Math.sin(d * 0.95 + col * 0.07 + Math.sin(col * 0.19) * 1.4);
-        tone = 0.85 * Math.exp(-d / (2.5 + 7 * amps[col])) + 0.2 * strata * fade + 0.07 * fade;
-        if (row - s < 0.9) tone = 1;
-      }
-      pixels[row * cols + col] = shade(tone, row, col);
-    }
-  }
-  return `<image x="0" y="38" width="${width}" height="${height}" preserveAspectRatio="none" href="data:image/png;base64,${palettePng(pixels, cols, rows, c.ditherPalette)}"/>`;
 }
 
 function headerSvg() {
@@ -576,13 +571,17 @@ function headerSvg() {
     }
   }
   const today = history && history.lastDay === new Date().toISOString().slice(0, 10) && history.lastCount > 0;
-  const crestY = sceneY + Math.max(0, (surfaceAt(sceneCols - 1, 0) - 3)) * CELL;
+  const tipY = sceneY + (axisRow - halfHeight(sceneCols - 1)) * CELL - 10;
+  const peakCount = history ? history.weeks[peakWeek] : 0;
+  const novaX = nova ? nova.col * CELL : 0;
+  const novaRight = novaX < W - 330;
+  const novaLabel = nova ? `<text x="${novaRight ? novaX + 66 : novaX - 66}" y="${sceneY + nova.row * CELL + 4}" text-anchor="${novaRight ? 'start' : 'end'}" class="code-sm t2 cap">supernova: peak week, ${peakCount} contributions</text>` : '';
   const caption = history
-    ? `<text x="26" y="${bandY - 14}" class="code-sm t2 cap">${history.total.toLocaleString('en')} contributions since ${monthYear(history.from)}</text>${today ? `<text x="${W - 40}" y="${bandY - 14}" text-anchor="end" class="code-sm t2 cap">contributed today</text>${pendingMark(W - 30, bandY - 23)}${pendingMark(W - 14, crestY)}` : ''}`
+    ? `<text x="26" y="${bandY - 14}" class="code-sm t2 cap">${history.total.toLocaleString('en')} contributions since ${monthYear(history.from)}</text>${today ? `<text x="${W - 40}" y="${bandY - 14}" text-anchor="end" class="code-sm t2 cap">contributed today</text>${pendingMark(W - 30, bandY - 23)}${pendingMark(W - 14, tipY)}` : ''}`
     : '';
   const intro = wrap(profile.intro, 36, 3);
   const body = `${panelHead(W, `${github.username} / README.md`, `github.com/${github.username}`, 'building')}
-    <g transform="translate(0 ${sceneY})">${ocean()}</g>${years.join('')}${caption}
+    <g transform="translate(0 ${sceneY})">${universe()}</g>${years.join('')}${novaLabel}${caption}
     <line x1="0" x2="${W}" y1="${bandY + .5}" y2="${bandY + .5}" stroke="${c.line}"/>
     <line x1="${split + .5}" x2="${split + .5}" y1="${bandY}" y2="${H}" stroke="${c.line}"/>
     <image x="26" y="${bandY + 24}" width="192" height="192" href="data:image/png;base64,${avatar}"/><rect x="26.5" y="${bandY + 24.5}" width="191" height="191" fill="none" stroke="${c.line}"/>
@@ -594,7 +593,7 @@ function headerSvg() {
     ${statCell(split + 172, bandY, W - split - 172, bandH / 2, 'Followers', compact(user.followers), true)}
     ${rankCell}
     ${statCell(split + 172, bandY + bandH / 2, W - split - 172, bandH / 2, 'Focus', profile.focus, true)}`;
-  return shell(W, H, `${profile.name}, ${profile.role}. ${history ? `${history.total} contributions since ${monthYear(history.from)}, drawn as ocean waves under a night sky.` : ''}${rank ? ` #${rank.countryRank} open source contributor in ${rank.countryName}, #${rank.worldRank} worldwide.` : ''}`, body);
+  return shell(W, H, `${profile.name}, ${profile.role}. ${history ? `${history.total} contributions since ${monthYear(history.from)}, drawn as an expanding universe with a supernova at the busiest week.` : ''}${rank ? ` #${rank.countryRank} open source contributor in ${rank.countryName}, #${rank.worldRank} worldwide.` : ''}`, body);
 }
 
 function statCell(x, y, width, height, label, value, rightEdge = false, valueClass = 't1', sub = '') {
@@ -602,20 +601,33 @@ function statCell(x, y, width, height, label, value, rightEdge = false, valueCla
 }
 
 const stars = (n) => `${n} ${n === 1 ? 'star' : 'stars'}`;
-const repoMeta = (repo) => `${repo.stargazers_count ? `${stars(repo.stargazers_count)}, ` : ''}pushed ${date(repo.pushed_at)}`;
+const repoMeta = (repo) => (repo.stargazers_count ? stars(repo.stargazers_count) : '');
 const repoUrl = (repo) => repo.homepage?.trim() || repo.html_url;
 const homepageHost = (repo) => repo.homepage?.trim() ? new URL(repo.homepage).host.replace(/^www\./, '') : repo.full_name.split('/')[0];
 
-function projectSvg(repo) {
-  const width = W / 2;
-  const chartH = 152;
+const COVER_W = W / 2;
+const COVER_H = 230;
+
+function coverImage(repo) {
+  const file = path.join(ROOT, 'assets', 'covers', `${repo.name.toLowerCase()}.jpg`);
+  return readFile(file).then((bytes) => bytes.toString('base64'), () => '');
+}
+
+function projectSvg(repo, cover) {
+  const width = COVER_W;
   const activity = data.activity?.[repo.full_name];
   const lines = wrap(repo.description, 50, 2);
-  const y0 = 38 + chartH;
-  const caption = activity
-    ? `<text x="12" y="58" class="code-sm t3 cap">Commits per week, ${date(activity.from)} to today</text><text x="${width - 12}" y="58" text-anchor="end" class="code-sm t3 cap">${activity.total.toLocaleString('en')} total, peak ${activity.peak}</text>`
-    : `<text x="12" y="58" class="code-sm t3 cap">No commit history yet</text>`;
-  const body = `${panelHead(width, repo.name, homepageHost(repo))}${chartImage(width, chartH, activity)}${caption}
+  const coverY = 38;
+  const stripY = coverY + COVER_H;
+  const y0 = stripY + 34;
+  const visual = cover
+    ? `<rect x="0" y="${coverY}" width="${width}" height="${COVER_H}" fill="${c.well}"/><image x="0" y="${coverY}" width="${width}" height="${COVER_H}" preserveAspectRatio="xMidYMin slice" style="image-rendering:auto" href="data:image/jpeg;base64,${cover}"/>`
+    : `<rect x="0" y="${coverY}" width="${width}" height="${COVER_H}" fill="${c.well}"/><text x="${width / 2}" y="${coverY + COVER_H / 2 + 8}" text-anchor="middle" class="sans display t3" font-size="32">${esc(repo.name)}</text>`;
+  const strip = activity
+    ? `<text x="12" y="${stripY + 22}" class="code-sm t3">Commits per week, ${date(activity.from)} to today</text><text x="${width - 12}" y="${stripY + 22}" text-anchor="end" class="code-sm t2">${activity.total.toLocaleString('en')} total, peak ${activity.peak}</text>`
+    : `<text x="12" y="${stripY + 22}" class="code-sm t3">No commit history yet</text>`;
+  const body = `${panelHead(width, repo.name, homepageHost(repo))}${visual}
+    <rect x="0" y="${stripY}" width="${width}" height="34" fill="${c.panel}"/><line x1="0" x2="${width}" y1="${stripY + .5}" y2="${stripY + .5}" stroke="${c.line}"/>${strip}
     <line x1="0" x2="${width}" y1="${y0 + .5}" y2="${y0 + .5}" stroke="${c.line}"/>
     <text x="20" y="${y0 + 36}" class="sans body t1">${esc(lines[0] || '')}</text><text x="20" y="${y0 + 57}" class="sans body t1">${esc(lines[1] || '')}</text>
     <text x="20" y="${y0 + 98}" class="code-sm t3">${esc(repo.language || 'mixed')}</text><text x="${width - 20}" y="${y0 + 98}" text-anchor="end" class="code-sm t3">${esc(repoMeta(repo))}</text>`;
@@ -628,9 +640,9 @@ function reposSvg(repos) {
   const H = headerH + repos.length * rowH;
   const rows = repos.map((repo, index) => {
     const y = headerH + index * rowH;
-    return `${index ? `<line x1="0" x2="${W}" y1="${y + .5}" y2="${y + .5}" stroke="${c.lineFaint}"/>` : ''}<text x="16" y="${y + 33}" class="code t1">${esc(clamp(repo.name, 20))}</text><text x="200" y="${y + 33}" class="sans" font-size="14" fill="${c.text2}">${esc(clamp(repo.description || 'No description yet.', 46))}</text><text x="560" y="${y + 33}" class="code-sm t3">${esc(repo.language || 'mixed')}</text><text x="${W - 16}" y="${y + 33}" text-anchor="end" class="code-sm t3">${esc(repoMeta(repo))}</text>`;
+    return `${index ? `<line x1="0" x2="${W}" y1="${y + .5}" y2="${y + .5}" stroke="${c.lineFaint}"/>` : ''}<text x="16" y="${y + 33}" class="code t1">${esc(clamp(repo.name, 20))}</text><text x="200" y="${y + 33}" class="sans" font-size="14" fill="${c.text2}">${esc(clamp(repo.description || 'No description yet.', 58))}</text><text x="660" y="${y + 33}" class="code-sm t3">${esc(repo.language || 'mixed')}</text><text x="${W - 16}" y="${y + 33}" text-anchor="end" class="code-sm t3">${esc(repoMeta(repo))}</text>`;
   }).join('');
-  return shell(W, H, `More repositories by ${github.username}, most starred first`, `${panelHead(W, 'more repositories', 'sorted by stars')}${rows}`);
+  return shell(W, H, `More repositories by ${github.username}, most recently pushed first`, `${panelHead(W, 'more repositories', 'latest pushed first')}${rows}`);
 }
 
 function postsSvg(posts) {
@@ -681,9 +693,9 @@ function readme(featured, more, posts, links) {
   const img = (name, alt, width = '100%') => `<img src="./profile/generated/${name}.svg?v=${assetVersion}" width="${width}" alt="${esc(alt)}">`;
   const headerAlt = `${profile.name}, ${profile.role}. ${data.user.public_repos} repositories, ${data.user.followers} followers${data.rank ? `, #${data.rank.countryRank} open source contributor in ${data.rank.countryName}` : ''}`;
   const cards = featured.map((repo, index) => `<a href="${repoUrl(repo)}">${img(`project-${String(index + 1).padStart(2, '0')}`, `${repo.name}: ${repo.description || 'GitHub repository'}`, '50%')}</a>`).join('');
-  const list = more.length ? `<a href="https://github.com/${github.username}?tab=repositories&sort=stargazers">${img('repos', `More repositories by ${github.username}: ${more.map((repo) => `${repo.name} (${repo.language || 'mixed'}, ${repo.stargazers_count} stars) ${repo.description || ''}`.trim()).join('; ')}`)}</a>\n\n` : '';
+  const list = more.length ? `<a href="https://github.com/${github.username}?tab=repositories&sort=updated">${img('repos', `More repositories by ${github.username}: ${more.map((repo) => `${repo.name} (${repo.language || 'mixed'}, ${repo.stargazers_count} stars) ${repo.description || ''}`.trim()).join('; ')}`)}</a>\n\n` : '';
   const writing = posts.length ? `<a href="${blog.url}">${img('posts', `Latest writing: ${posts.map((post) => post.title).join('; ')}`)}</a>\n\n` : '';
-  const stats = data.stats ? `<a href="https://github.com/${github.username}">${img('stats', `Stats: ${data.stats.stars} stars, ${data.stats.commits} commits, ${data.stats.pulls} pull requests, ${data.stats.issues} issues`)}</a>\n\n` : '';
+  const stats = data.stats ? `<a href="https://github.com/${github.username}">${img('stats', `Stats: ${data.stats.stars} stars, ${data.stats.commits} commits, ${data.stats.pulls} pull requests, ${data.stats.issues} issues${data.streak ? `, current streak ${data.streak.current.length} days, longest ${data.streak.longest.length} days` : ''}`)}</a>\n\n` : '';
   const linkCells = links.map((link, index) => `<a href="${link.url}">${img(`link-${String(index + 1).padStart(2, '0')}`, link.label, `${100 / links.length}%`)}</a>`).join('');
   return `<!-- Generated by scripts/build-profile.mjs. Edit profile.config.json, not this file. -->
 <p align="center"><a href="${github.username === 'FindMalek' ? 'https://www.findmalek.com' : `https://github.com/${github.username}`}">${img('header', headerAlt)}</a></p>
@@ -696,8 +708,9 @@ ${list}${writing}${stats}<p align="center">${linkCells}</p>
 
 await rm(OUT, { recursive: true, force: true });
 await mkdir(OUT, { recursive: true });
-const featured = data.repos.slice(0, github.featured);
-const more = data.repos.slice(github.featured, github.featured + github.list);
+const featured = data.repos.slice(0, github.featured.length);
+const more = data.repos.slice(github.featured.length, github.featured.length + github.list);
+const covers = await Promise.all(featured.map(coverImage));
 const posts = (data.posts || []).slice(0, blog.limit);
 const links = profile.links.slice(0, 6);
 assetVersion = createHash('sha256')
@@ -706,10 +719,11 @@ assetVersion = createHash('sha256')
   .update(generatorSource)
   .update(monoFont)
   .update(avatar)
+  .update(covers.join(''))
   .digest('hex')
   .slice(0, 10);
 await writeFile(path.join(OUT, 'header.svg'), headerSvg());
-await Promise.all(featured.map((repo, index) => writeFile(path.join(OUT, `project-${String(index + 1).padStart(2, '0')}.svg`), projectSvg(repo))));
+await Promise.all(featured.map((repo, index) => writeFile(path.join(OUT, `project-${String(index + 1).padStart(2, '0')}.svg`), projectSvg(repo, covers[index]))));
 if (more.length) await writeFile(path.join(OUT, 'repos.svg'), reposSvg(more));
 if (posts.length) await writeFile(path.join(OUT, 'posts.svg'), postsSvg(posts));
 if (data.stats) await writeFile(path.join(OUT, 'stats.svg'), statsSvg(data.stats, data.streak));

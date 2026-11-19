@@ -13,7 +13,7 @@ if (!config.theme.ditherPalette.every((color) => typeof color === 'string' && he
 const badTheme = Object.entries(config.theme).filter(([key, value]) => key !== 'ditherPalette' && typeof value !== 'string').map(([key]) => key);
 if (badTheme.length) throw new Error(`theme colors must be strings: ${badTheme.join(', ')}`);
 if (!config.github?.username) throw new Error('github.username is required');
-if (!Number.isInteger(config.github.featured) || config.github.featured < 2 || config.github.featured % 2) throw new Error('github.featured must be an even integer, at least 2');
+if (!Array.isArray(config.github.featured) || config.github.featured.length < 2 || config.github.featured.length % 2 || !config.github.featured.every((name) => typeof name === 'string')) throw new Error('github.featured must list an even number of repo names, at least 2');
 if (!Number.isInteger(config.github.list) || config.github.list < 0) throw new Error('github.list must be a non-negative integer');
 if (!URL.canParse(config.blog?.url || '')) throw new Error('blog.url must be a valid URL');
 if (!Array.isArray(config.profile?.links) || config.profile.links.length < 1 || config.profile.links.length > 6) throw new Error('profile.links must contain between one and six links');

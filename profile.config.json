@@ -2,8 +2,15 @@
   "$schema": "./profile.config.schema.json",
   "github": {
     "username": "FindMalek",
-    "exclude": ["FindMalek"],
-    "featured": 4,
+    "exclude": [
+      "FindMalek"
+    ],
+    "featured": [
+      "dukkani",
+      "guesswork",
+      "sonaraem",
+      "website"
+    ],
     "list": 8
   },
   "blog": {
@@ -14,8 +21,8 @@
     "name": "malek",
     "handle": "@FindMalek",
     "role": "ai + backend engineer",
-    "intro": "Building AI, backend, web and open source tools. Awake for the stars and the sea.",
-    "status": "shipping guesswork, dukkani and sonaraem",
+    "intro": "Building AI, backend, web and open source tools.",
+    "status": "guesswork, dukkani, sonaraem",
     "focus": "AI/backend",
     "state": "active",
     "links": [
