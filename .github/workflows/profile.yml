@@ -12,6 +12,7 @@ on:
       - scripts/build-profile.mjs
       - scripts/check-profile.mjs
       - fonts/**
+      - profile/avatar.png
       - package.json
       - LICENSE
 
