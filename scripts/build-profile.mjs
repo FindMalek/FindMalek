@@ -616,7 +616,7 @@ function coverImage(repo) {
 function projectSvg(repo, cover) {
   const width = COVER_W;
   const activity = data.activity?.[repo.full_name];
-  const lines = wrap(repo.description, 50, 2);
+  const lines = wrap(repo.description, 44, 2);
   const coverY = 38;
   const stripY = coverY + COVER_H;
   const y0 = stripY + 34;
@@ -642,7 +642,7 @@ function reposSvg(repos) {
     const y = headerH + index * rowH;
     return `${index ? `<line x1="0" x2="${W}" y1="${y + .5}" y2="${y + .5}" stroke="${c.lineFaint}"/>` : ''}<text x="16" y="${y + 33}" class="code t1">${esc(clamp(repo.name, 20))}</text><text x="200" y="${y + 33}" class="sans" font-size="14" fill="${c.text2}">${esc(clamp(repo.description || 'No description yet.', 58))}</text><text x="660" y="${y + 33}" class="code-sm t3">${esc(repo.language || 'mixed')}</text><text x="${W - 16}" y="${y + 33}" text-anchor="end" class="code-sm t3">${esc(repoMeta(repo))}</text>`;
   }).join('');
-  return shell(W, H, `More repositories by ${github.username}, most recently pushed first`, `${panelHead(W, 'more repositories', 'latest pushed first')}${rows}`);
+  return shell(W, H, `More repositories by ${github.username}, most recently pushed first`, `${panelHead(W, 'more repositories', 'latest 3 contributed to')}${rows}`);
 }
 
 function postsSvg(posts) {
@@ -693,7 +693,7 @@ function readme(featured, more, posts, links) {
   const img = (name, alt, width = '100%') => `<img src="./profile/generated/${name}.svg?v=${assetVersion}" width="${width}" alt="${esc(alt)}">`;
   const headerAlt = `${profile.name}, ${profile.role}. ${data.user.public_repos} repositories, ${data.user.followers} followers${data.rank ? `, #${data.rank.countryRank} open source contributor in ${data.rank.countryName}` : ''}`;
   const cards = featured.map((repo, index) => `<a href="${repoUrl(repo)}">${img(`project-${String(index + 1).padStart(2, '0')}`, `${repo.name}: ${repo.description || 'GitHub repository'}`, '50%')}</a>`).join('');
-  const list = more.length ? `<a href="https://github.com/${github.username}?tab=repositories&sort=updated">${img('repos', `More repositories by ${github.username}: ${more.map((repo) => `${repo.name} (${repo.language || 'mixed'}, ${repo.stargazers_count} stars) ${repo.description || ''}`.trim()).join('; ')}`)}</a>\n\n` : '';
+  const list = more.length ? `<a href="https://github.com/${github.username}?tab=repositories">${img('repos', `More repositories by ${github.username}: ${more.map((repo) => `${repo.name} (${repo.language || 'mixed'}, ${repo.stargazers_count} stars) ${repo.description || ''}`.trim()).join('; ')}`)}</a>\n\n` : '';
   const writing = posts.length ? `<a href="${blog.url}">${img('posts', `Latest writing: ${posts.map((post) => post.title).join('; ')}`)}</a>\n\n` : '';
   const stats = data.stats ? `<a href="https://github.com/${github.username}">${img('stats', `Stats: ${data.stats.stars} stars, ${data.stats.commits} commits, ${data.stats.pulls} pull requests, ${data.stats.issues} issues${data.streak ? `, current streak ${data.streak.current.length} days, longest ${data.streak.longest.length} days` : ''}`)}</a>\n\n` : '';
   const linkCells = links.map((link, index) => `<a href="${link.url}">${img(`link-${String(index + 1).padStart(2, '0')}`, link.label, `${100 / links.length}%`)}</a>`).join('');
