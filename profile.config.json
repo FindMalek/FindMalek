@@ -15,7 +15,8 @@
   },
   "blog": {
     "url": "https://www.findmalek.com/blog",
-    "limit": 5
+    "limit": 5,
+    "link": "https://www.findmalek.com/blogs"
   },
   "profile": {
     "name": "malek",

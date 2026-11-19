@@ -157,6 +157,19 @@
       "total": 144,
       "peak": 34
     },
+    "FindMalek/lodesong": {
+      "from": "2026-10-11",
+      "weeks": [
+        119,
+        54,
+        82,
+        49,
+        57,
+        27
+      ],
+      "total": 388,
+      "peak": 119
+    },
     "FindMalek/sonaraem": {
       "from": "2026-03-01",
       "weeks": [
@@ -201,19 +214,6 @@
       ],
       "total": 297,
       "peak": 52
-    },
-    "FindMalek/lodesong": {
-      "from": "2026-10-11",
-      "weeks": [
-        119,
-        54,
-        82,
-        49,
-        57,
-        27
-      ],
-      "total": 388,
-      "peak": 119
     }
   },
   "rank": {
@@ -223,7 +223,7 @@
     "total": 213
   },
   "streak": {
-    "total": 6140,
+    "total": 6141,
     "current": {
       "length": 82,
       "start": "2026-08-30",
@@ -240,7 +240,7 @@
   "history": {
     "from": "2020-11-14",
     "to": "2026-11-19",
-    "total": 10768,
+    "total": 10769,
     "weeks": [
       2,
       0,
@@ -555,14 +555,14 @@
       646,
       396,
       701,
-      482
+      483
     ],
     "lastDay": "2026-11-19",
-    "lastCount": 92
+    "lastCount": 93
   },
   "stats": {
     "stars": 82,
-    "commits": 5013,
+    "commits": 5015,
     "pulls": 1474,
     "issues": 1935,
     "languages": [
