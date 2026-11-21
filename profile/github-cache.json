@@ -17,24 +17,6 @@
       "updated_at": "2026-10-31T16:42:32Z",
       "topics": []
     },
-    "lodesong": {
-      "name": "lodesong",
-      "full_name": "FindMalek/lodesong",
-      "html_url": "https://github.com/FindMalek/lodesong",
-      "description": "lodesong: a monochrome web music player for navidrome / subsonic",
-      "language": "TypeScript",
-      "stargazers_count": 2,
-      "forks_count": 0,
-      "updated_at": "2026-11-11T07:49:31Z",
-      "topics": [
-        "bun",
-        "music-player",
-        "navidrome",
-        "react",
-        "self-hosted",
-        "subsonic"
-      ]
-    },
     "lyterion": {
       "name": "lyterion",
       "full_name": "FindMalek/lyterion",
@@ -46,17 +28,6 @@
       "updated_at": "2026-11-04T06:51:11Z",
       "topics": []
     },
-    "muslim-fasting": {
-      "name": "muslim-fasting",
-      "full_name": "FindMalek/muslim-fasting",
-      "html_url": "https://github.com/FindMalek/muslim-fasting",
-      "description": "Comprehensive Guide to Islamic Fasting Practices and Traditions",
-      "language": "TypeScript",
-      "stargazers_count": 3,
-      "forks_count": 1,
-      "updated_at": "2026-02-28T13:35:20Z",
-      "topics": []
-    },
     "zero-locker": {
       "name": "zero-locker",
       "full_name": "FindMalek/zero-locker",
@@ -66,28 +37,6 @@
       "stargazers_count": 3,
       "forks_count": 0,
       "updated_at": "2026-07-21T01:05:19Z",
-      "topics": []
-    },
-    "website": {
-      "name": "website",
-      "full_name": "FindMalek/website",
-      "html_url": "https://github.com/FindMalek/website",
-      "description": " Personal portfolio website, build with NextJs, TypeScript & TailwindCSS",
-      "language": "TypeScript",
-      "stargazers_count": 5,
-      "forks_count": 0,
-      "updated_at": "2026-11-09T09:32:20Z",
-      "topics": []
-    },
-    "sonaraem": {
-      "name": "sonaraem",
-      "full_name": "FindMalek/sonaraem",
-      "html_url": "https://github.com/FindMalek/sonaraem",
-      "description": "A personal music intelligence system that continuously classifies, clusters, and optimizes your Spotify library.",
-      "language": "MDX",
-      "stargazers_count": 4,
-      "forks_count": 8,
-      "updated_at": "2026-11-12T15:04:22Z",
       "topics": []
     },
     "Syncify": {
@@ -113,6 +62,39 @@
         "track"
       ]
     },
+    "website": {
+      "name": "website",
+      "full_name": "FindMalek/website",
+      "html_url": "https://github.com/FindMalek/website",
+      "description": " Personal portfolio website, build with NextJs, TypeScript & TailwindCSS",
+      "language": "TypeScript",
+      "stargazers_count": 5,
+      "forks_count": 0,
+      "updated_at": "2026-11-09T09:32:20Z",
+      "topics": []
+    },
+    "muslim-fasting": {
+      "name": "muslim-fasting",
+      "full_name": "FindMalek/muslim-fasting",
+      "html_url": "https://github.com/FindMalek/muslim-fasting",
+      "description": "Comprehensive Guide to Islamic Fasting Practices and Traditions",
+      "language": "TypeScript",
+      "stargazers_count": 3,
+      "forks_count": 1,
+      "updated_at": "2026-02-28T13:35:20Z",
+      "topics": []
+    },
+    "sonaraem": {
+      "name": "sonaraem",
+      "full_name": "FindMalek/sonaraem",
+      "html_url": "https://github.com/FindMalek/sonaraem",
+      "description": "A personal music intelligence system that continuously classifies, clusters, and optimizes your Spotify library.",
+      "language": "MDX",
+      "stargazers_count": 4,
+      "forks_count": 8,
+      "updated_at": "2026-11-12T15:04:22Z",
+      "topics": []
+    },
     "FindMalek/guesswork": {
       "name": "guesswork",
       "full_name": "FindMalek/guesswork",
@@ -130,6 +112,24 @@
         "typescript",
         "zsh"
       ]
+    },
+    "lodesong": {
+      "name": "lodesong",
+      "full_name": "FindMalek/lodesong",
+      "html_url": "https://github.com/FindMalek/lodesong",
+      "description": "lodesong: a monochrome web music player for navidrome / subsonic",
+      "language": "TypeScript",
+      "stargazers_count": 2,
+      "forks_count": 0,
+      "updated_at": "2026-11-11T07:49:31Z",
+      "topics": [
+        "bun",
+        "music-player",
+        "navidrome",
+        "react",
+        "self-hosted",
+        "subsonic"
+      ]
     }
   },
   "rank": {
@@ -139,19 +139,19 @@
     "total": 213
   },
   "streak": {
-    "total": 6222,
+    "total": 6278,
     "current": {
-      "length": 83,
+      "length": 84,
       "start": "2026-08-30",
-      "end": "2026-11-20"
+      "end": "2026-11-21"
     },
     "longest": {
-      "length": 83,
+      "length": 84,
       "start": "2026-08-30",
-      "end": "2026-11-20"
+      "end": "2026-11-21"
     },
     "from": "2025-11-16",
-    "to": "2026-11-20",
+    "to": "2026-11-21",
     "levels": [
       1,
       1,
@@ -522,14 +522,15 @@
       1,
       1,
       3,
+      1,
       1
     ]
   },
   "stats": {
     "stars": 82,
-    "commits": 3931,
-    "pulls": 1382,
-    "issues": 1786,
+    "commits": 3948,
+    "pulls": 1402,
+    "issues": 1799,
     "languages": [
       {
         "name": "TypeScript",
