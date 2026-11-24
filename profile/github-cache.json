@@ -6,15 +6,15 @@
     "following": 131
   },
   "repos": {
-    "sonaraem": {
-      "name": "sonaraem",
-      "full_name": "FindMalek/sonaraem",
-      "html_url": "https://github.com/FindMalek/sonaraem",
-      "description": "A personal music intelligence system that continuously classifies, clusters, and optimizes your Spotify library.",
-      "language": "MDX",
-      "stargazers_count": 4,
-      "forks_count": 8,
-      "updated_at": "2026-11-12T15:04:22Z",
+    "website": {
+      "name": "website",
+      "full_name": "FindMalek/website",
+      "html_url": "https://github.com/FindMalek/website",
+      "description": " Personal portfolio website, build with NextJs, TypeScript & TailwindCSS",
+      "language": "TypeScript",
+      "stargazers_count": 5,
+      "forks_count": 0,
+      "updated_at": "2026-11-09T09:32:20Z",
       "topics": []
     },
     "zero-locker": {
@@ -57,26 +57,15 @@
       "updated_at": "2026-10-31T16:42:32Z",
       "topics": []
     },
-    "lyterion": {
-      "name": "lyterion",
-      "full_name": "FindMalek/lyterion",
-      "html_url": "https://github.com/FindMalek/lyterion",
-      "description": "Personal self-hosted tool that moves a whole Spotify library to Navidrome, finding every track across many sources",
-      "language": "TypeScript",
-      "stargazers_count": 0,
-      "forks_count": 0,
-      "updated_at": "2026-11-04T06:51:11Z",
-      "topics": []
-    },
-    "website": {
-      "name": "website",
-      "full_name": "FindMalek/website",
-      "html_url": "https://github.com/FindMalek/website",
-      "description": " Personal portfolio website, build with NextJs, TypeScript & TailwindCSS",
-      "language": "TypeScript",
-      "stargazers_count": 5,
-      "forks_count": 0,
-      "updated_at": "2026-11-09T09:32:20Z",
+    "sonaraem": {
+      "name": "sonaraem",
+      "full_name": "FindMalek/sonaraem",
+      "html_url": "https://github.com/FindMalek/sonaraem",
+      "description": "A personal music intelligence system that continuously classifies, clusters, and optimizes your Spotify library.",
+      "language": "MDX",
+      "stargazers_count": 4,
+      "forks_count": 8,
+      "updated_at": "2026-11-12T15:04:22Z",
       "topics": []
     },
     "muslim-fasting": {
@@ -113,6 +102,17 @@
         "track"
       ]
     },
+    "lyterion": {
+      "name": "lyterion",
+      "full_name": "FindMalek/lyterion",
+      "html_url": "https://github.com/FindMalek/lyterion",
+      "description": "Personal self-hosted tool that moves a whole Spotify library to Navidrome, finding every track across many sources",
+      "language": "TypeScript",
+      "stargazers_count": 0,
+      "forks_count": 0,
+      "updated_at": "2026-11-04T06:51:11Z",
+      "topics": []
+    },
     "FindMalek/guesswork": {
       "name": "guesswork",
       "full_name": "FindMalek/guesswork",
@@ -139,19 +139,19 @@
     "total": 213
   },
   "streak": {
-    "total": 6512,
+    "total": 6565,
     "current": {
-      "length": 86,
+      "length": 87,
       "start": "2026-08-30",
-      "end": "2026-11-23"
+      "end": "2026-11-24"
     },
     "longest": {
-      "length": 86,
+      "length": 87,
       "start": "2026-08-30",
-      "end": "2026-11-23"
+      "end": "2026-11-24"
     },
     "from": "2025-11-23",
-    "to": "2026-11-23",
+    "to": "2026-11-24",
     "levels": [
       1,
       1,
@@ -518,14 +518,15 @@
       1,
       3,
       2,
-      2
+      3,
+      1
     ]
   },
   "stats": {
     "stars": 82,
-    "commits": 4044,
-    "pulls": 1499,
-    "issues": 1874,
+    "commits": 4050,
+    "pulls": 1507,
+    "issues": 1902,
     "languages": [
       {
         "name": "TypeScript",
